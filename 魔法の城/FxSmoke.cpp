@@ -1,13 +1,13 @@
-#include "FxSmoke.h"
+ï»¿#include "FxSmoke.h"
 
 #define TEXTURE_NAME ("Resources/texture/smoke_tex.png")
 
 void FxSmoke::Start() {
-    Emitter::Start();                                   // eŠJnˆ—
-    Emitter::SetGenerate(1);                            // ”­¶”
-    Emitter::SetDuration(10.0f);                        // ”­¶ŠÔ
-    Emitter::SetStartLifeTime(2.0f);                    // Á¸ŠÔ
-    Emitter::SetGravityMultiplier(false);               // d—ÍOFF
+    Emitter::Start();                                   // è¦ªé–‹å§‹å‡¦ç†
+    Emitter::SetGenerate(1);                            // ç™ºç”Ÿæ•°
+    Emitter::SetDuration(10.0f);                        // ç™ºç”Ÿæ™‚é–“
+    Emitter::SetStartLifeTime(2.0f);                    // æ¶ˆå¤±æ™‚é–“
+    Emitter::SetGravityMultiplier(false);               // é‡åŠ›OFF
     Emitter::SetTexture(TEXTURE_NAME);
     m_isEnable = true;
     m_blendMode = BlendStates::ALPHABLEND;
