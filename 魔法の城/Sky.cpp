@@ -1,13 +1,13 @@
-#include "Sky.h"
+ï»¿#include "Sky.h"
 #include "Camera.h"
 
-// ƒ}ƒNƒ’è‹`
-#define PATH_MODEL_SKY ("Resources/model/sky.fbx") // ƒ‚ƒfƒ‹
+// ãƒžã‚¯ãƒ­å®šç¾©
+#define PATH_MODEL_SKY ("Resources/model/sky.fbx") // ãƒ¢ãƒ‡ãƒ«
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Sky::Sky() {}
 
-// ƒfƒXƒgƒ‰ƒNƒ^
+// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Sky::~Sky() {}
 
 void Sky::Start() {
@@ -20,7 +20,6 @@ void Sky::Start() {
     renderer->m_isZWrite    = false;
     renderer->m_rendererTag = RendererTags::BACKGROUND;
     renderer->m_shaderName  = "NormalModel";
-
 }
 
 void Sky::Update() {
