@@ -18,11 +18,11 @@
 class DirectGraphics : public Singleton<DirectGraphics>{
 public:
     struct TextureData {
-        int Ragister;
+        int Register;
         int Num;
         ID3D11ShaderResourceView** texture;
-        TextureData(int Ragister,int Num, ID3D11ShaderResourceView** texture) {
-            this->Ragister = Ragister;
+        TextureData(int Register,int Num, ID3D11ShaderResourceView** texture) {
+            this->Register = Register;
             this->Num      = Num;
             this->texture  = texture;
         }

@@ -255,9 +255,9 @@ void DirectGraphics::SetTexture(TextureData texture, std::string samplerName) {
     }
     // PixelShaderで使用するテクスチャの設定
     if (texture.texture) {
-        m_Context->PSSetShaderResources(texture.Ragister, texture.Num, texture.texture);
+        m_Context->PSSetShaderResources(texture.Register, texture.Num, texture.texture);
     } else {
-        m_Context->PSSetShaderResources(texture.Ragister, texture.Num, &m_baseTexture);
+        m_Context->PSSetShaderResources(texture.Register, texture.Num, &m_baseTexture);
     }
 }
 
