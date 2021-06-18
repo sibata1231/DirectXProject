@@ -77,8 +77,8 @@ public:
 	
 	void SetUpTransform();
 
-    void SetUpdateShader(std::string name);
-    void SetUpdateRenderTarget(std::string rtvName, std::string dstName);
+    void UpdateShader(std::string name);
+    void UpdateRenderTarget(std::string rtvName, std::string dstName);
 
 	ID3D11Device* GetDevice() {
 		return m_Device;
@@ -135,19 +135,19 @@ public:
     void SetTexture(TextureData texture, std::string samplerName = "Default");
 
     // コンスタントバッファ
-    void SetUpdateCamera();                                                             // 0
-    void SetUpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMATRIX projection); // 0
-    void SetUpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMATRIX projection, XMVECTOR pos, XMVECTOR direction); // 0
-    void SetUpdateLight();                                                              // 1
-    void SetUpdateLight(DirectX::XMMATRIX matrix);                                      // 1
-    void SetUpdateWorldMatrixBuffer(DirectX::XMMATRIX world, DirectX::XMMATRIX WVP);    // 2
-    void SetUpdateMaterial(ObjMaterial material);                                       // 3
-    void SetUpdateTexture(DirectX::XMMATRIX textureMatrix);                             // 4
-    void SetUpdateConstantBuffers(int registerNum, std::string bufferName,void* buffer);// その他
-    void SetUpdateShaderConstantBuffers(ShaderType shaderType, int registerIndex, std::string bufferName); // 定数バッファ更新
+    void UpdateCamera();                                                             // 0
+    void UpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMATRIX projection); // 0
+    void UpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMATRIX projection, XMVECTOR pos, XMVECTOR direction); // 0
+    void UpdateLight();                                                              // 1
+    void UpdateLight(DirectX::XMMATRIX matrix);                                      // 1
+    void UpdateWorldMatrixBuffer(DirectX::XMMATRIX world, DirectX::XMMATRIX WVP);    // 2
+    void UpdateMaterial(ObjMaterial material);                                       // 3
+    void UpdateTexture(DirectX::XMMATRIX textureMatrix);                             // 4
+    void UpdateConstantBuffers(int registerNum, std::string bufferName,void* buffer);// その他
+    void UpdateShaderConstantBuffers(ShaderType shaderType, int registerIndex, std::string bufferName); // 定数バッファ更新
 
     // シェーダー関連
-    void SetUpdateLayout(std::string layout);
+    void UpdateLayout(std::string layout);
 
 private:
 	/**
@@ -210,7 +210,7 @@ private:
 	 * ContextにViewPortの設定を行う関数@n
 	 * ゲーム中に変更がなければ最初に１度行えば問題ない
 	 */
-    void SetUpdateViewPort(UINT width, UINT height);
+    void UpdateViewPort(UINT width, UINT height);
 
 	/**
 	 * @brief TextureSampler作成関数@n

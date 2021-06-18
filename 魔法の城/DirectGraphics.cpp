@@ -118,7 +118,7 @@ bool DirectGraphics::Init() {
     if (CreateShader("DepthShadow",    "PNCT", (int)ShaderModes::DEPTH_SHADOW)    == false) { return false; }
 
     // ViewPort設定
-    SetUpdateViewPort(width, height);
+    UpdateViewPort(width, height);
 
 	// 変換行列設定
 	SetUpTransform();
@@ -191,10 +191,10 @@ void DirectGraphics::SetRenderTargets(std::string rtvName, std::string dsvName, 
     UINT height = UINT(rect.bottom - rect.top);
 
     // ビューポート設定
-    SetUpdateViewPort(width, height);
+    UpdateViewPort(width, height);
 
     // レンダーターゲット設定
-    SetUpdateRenderTarget(rtvName, dsvName);
+    UpdateRenderTarget(rtvName, dsvName);
     // レンダー初期化
     if (color) {
         // DirecX9ではRenderTargetとDepth、Stencilバッファのクリアは別々にする
@@ -211,7 +211,7 @@ void DirectGraphics::SetRenderTargets(std::string rtvName, std::string dsvName, 
 
 void DirectGraphics::StartRendering() {
     // レンダーターゲット設定
-    SetUpdateRenderTarget("Default", "Default");
+    UpdateRenderTarget("Default", "Default");
 
     // DirecX9ではRenderTargetとDepth、Stencilバッファのクリアは別々にする
     m_Context->ClearRenderTargetView(
@@ -271,12 +271,12 @@ void DirectGraphics::SetUpTransform() {
     XMVECTOR lightDirection = DirectX::XMVector3Normalize(DirectX::XMVectorSet(0.0f, 0.5f, -1.0f, 0.0f));
     Light::GetInstance().m_direction = lightDirection;
 
-    SetUpdateCamera();
-    SetUpdateLight();
+    UpdateCamera();
+    UpdateLight();
 }
 
 // カメラ設定
-void DirectGraphics::SetUpdateCamera() {
+void DirectGraphics::UpdateCamera() {
     MainCamera::GetInstance().Update();
     CameraBuffer* cameraBuffer = (CameraBuffer* )m_ConstantBufferData["Camera"]->m_buffer;    
 
@@ -285,11 +285,11 @@ void DirectGraphics::SetUpdateCamera() {
     XMStoreFloat4(&cameraBuffer->m_cameraPos,    MainCamera::GetInstance().GetLook());
     XMStoreFloat4(&cameraBuffer->m_cameraVector, MainCamera::GetInstance().GetEye());
     m_Context->UpdateSubresource(m_ConstantBuffer["Camera"], 0, nullptr, cameraBuffer, 0, 0);
-    SetUpdateShaderConstantBuffers(ShaderType::PIXEL,  0, "Camera");
-    SetUpdateShaderConstantBuffers(ShaderType::VERTEX, 0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::PIXEL,  0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::VERTEX, 0, "Camera");
 }
 
-void DirectGraphics::SetUpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMATRIX projection) {
+void DirectGraphics::UpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMATRIX projection) {
     CameraBuffer* cameraBuffer = (CameraBuffer*)m_ConstantBufferData["Camera"]->m_buffer;
 
     XMStoreFloat4x4(&cameraBuffer->m_view, XMMatrixTranspose(view));
@@ -297,11 +297,11 @@ void DirectGraphics::SetUpdateViewProjection(DirectX::XMMATRIX view, DirectX::XM
     XMStoreFloat4(&cameraBuffer->m_cameraPos, MainCamera::GetInstance().GetLook());
     XMStoreFloat4(&cameraBuffer->m_cameraVector, MainCamera::GetInstance().GetEye());
     m_Context->UpdateSubresource(m_ConstantBuffer["Camera"], 0, nullptr, cameraBuffer, 0, 0);
-    SetUpdateShaderConstantBuffers(ShaderType::PIXEL,  0, "Camera");
-    SetUpdateShaderConstantBuffers(ShaderType::VERTEX, 0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::PIXEL,  0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::VERTEX, 0, "Camera");
 }
 
-void DirectGraphics::SetUpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMATRIX projection, XMVECTOR pos, XMVECTOR direction) {
+void DirectGraphics::UpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMATRIX projection, XMVECTOR pos, XMVECTOR direction) {
     CameraBuffer* cameraBuffer = (CameraBuffer*)m_ConstantBufferData["Camera"]->m_buffer;
 
     XMStoreFloat4x4(&cameraBuffer->m_view, XMMatrixTranspose(view));
@@ -309,12 +309,12 @@ void DirectGraphics::SetUpdateViewProjection(DirectX::XMMATRIX view, DirectX::XM
     XMStoreFloat4(&cameraBuffer->m_cameraPos, pos);
     XMStoreFloat4(&cameraBuffer->m_cameraVector, direction);
     m_Context->UpdateSubresource(m_ConstantBuffer["Camera"], 0, nullptr, cameraBuffer, 0, 0);
-    SetUpdateShaderConstantBuffers(ShaderType::PIXEL,  0, "Camera");
-    SetUpdateShaderConstantBuffers(ShaderType::VERTEX, 0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::PIXEL,  0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::VERTEX, 0, "Camera");
 }
 
 // ライトのカラー設定
-void DirectGraphics::SetUpdateLight() {
+void DirectGraphics::UpdateLight() {
     LightBuffer* lightBuffer = (LightBuffer *)m_ConstantBufferData["Light"]->m_buffer;
 
     XMStoreFloat4(&lightBuffer->m_pos,    Light::GetInstance().m_position);
@@ -324,12 +324,12 @@ void DirectGraphics::SetUpdateLight() {
     lightBuffer->m_specular = *(DirectX::XMFLOAT4 *)&Light::GetInstance().m_specular;
     XMStoreFloat4x4(&lightBuffer->m_matrix, XMMatrixIdentity());
     m_Context->UpdateSubresource(m_ConstantBuffer["Light"], 0, nullptr, lightBuffer, 0, 0);
-    SetUpdateShaderConstantBuffers(ShaderType::PIXEL,  1, "Light");
-    SetUpdateShaderConstantBuffers(ShaderType::VERTEX, 1, "Light");
+    UpdateShaderConstantBuffers(ShaderType::PIXEL,  1, "Light");
+    UpdateShaderConstantBuffers(ShaderType::VERTEX, 1, "Light");
 }
 
 // ライトのカラー設定
-void DirectGraphics::SetUpdateLight(DirectX::XMMATRIX matrix) {
+void DirectGraphics::UpdateLight(DirectX::XMMATRIX matrix) {
     LightBuffer* lightBuffer = (LightBuffer *)m_ConstantBufferData["Light"]->m_buffer;
 
     XMStoreFloat4(&lightBuffer->m_pos, Light::GetInstance().m_position);
@@ -339,23 +339,23 @@ void DirectGraphics::SetUpdateLight(DirectX::XMMATRIX matrix) {
     lightBuffer->m_specular = *(DirectX::XMFLOAT4 *)&Light::GetInstance().m_specular;
     XMStoreFloat4x4(&lightBuffer->m_matrix, matrix);
     m_Context->UpdateSubresource(m_ConstantBuffer["Light"], 0, nullptr, lightBuffer, 0, 0);
-    SetUpdateShaderConstantBuffers(ShaderType::PIXEL, 1, "Light");
-    SetUpdateShaderConstantBuffers(ShaderType::VERTEX, 1, "Light");
+    UpdateShaderConstantBuffers(ShaderType::PIXEL, 1, "Light");
+    UpdateShaderConstantBuffers(ShaderType::VERTEX, 1, "Light");
 }
 
 // ワールドマトリックス設定
-void DirectGraphics::SetUpdateWorldMatrixBuffer(DirectX::XMMATRIX matrix,DirectX::XMMATRIX WVP) {
+void DirectGraphics::UpdateWorldMatrixBuffer(DirectX::XMMATRIX matrix,DirectX::XMMATRIX WVP) {
     WorldBuffer* worldBuffer = (WorldBuffer *)m_ConstantBufferData["World"]->m_buffer;
 
     XMStoreFloat4x4(&worldBuffer->m_wvp,   XMMatrixTranspose(WVP));
     XMStoreFloat4x4(&worldBuffer->m_world, XMMatrixTranspose(matrix));
     m_Context->UpdateSubresource(m_ConstantBuffer["World"], 0, nullptr, worldBuffer, 0, 0);
-    SetUpdateShaderConstantBuffers(ShaderType::PIXEL,  2, "World");
-    SetUpdateShaderConstantBuffers(ShaderType::VERTEX, 2, "World");
+    UpdateShaderConstantBuffers(ShaderType::PIXEL,  2, "World");
+    UpdateShaderConstantBuffers(ShaderType::VERTEX, 2, "World");
 }
 
 // マテリアル設定
-void DirectGraphics::SetUpdateMaterial(ObjMaterial material) {
+void DirectGraphics::UpdateMaterial(ObjMaterial material) {
     MaterialBuffer* materialBuffer = (MaterialBuffer *)m_ConstantBufferData["Material"]->m_buffer;
 
     materialBuffer->m_diffuse  = DirectX::XMFLOAT4(material.Diffuse[0],  material.Diffuse[1],  material.Diffuse[2],  material.Diffuse[3]);
@@ -363,27 +363,27 @@ void DirectGraphics::SetUpdateMaterial(ObjMaterial material) {
     materialBuffer->m_ambient  = DirectX::XMFLOAT4(material.Ambient[0],  material.Ambient[1],  material.Ambient[2],  material.Ambient[3]);
     materialBuffer->m_emissive = DirectX::XMFLOAT4(material.Emissive[0], material.Emissive[1], material.Emissive[2], material.Emissive[3]);
     m_Context->UpdateSubresource(m_ConstantBuffer["Material"], 0, nullptr, materialBuffer, 0, 0);
-    SetUpdateShaderConstantBuffers(ShaderType::PIXEL,  3, "Material");
-    SetUpdateShaderConstantBuffers(ShaderType::VERTEX, 3, "Material");
+    UpdateShaderConstantBuffers(ShaderType::PIXEL,  3, "Material");
+    UpdateShaderConstantBuffers(ShaderType::VERTEX, 3, "Material");
 }
 
 // テクスチャ設定
-void DirectGraphics::SetUpdateTexture(DirectX::XMMATRIX textureMatrix) {
+void DirectGraphics::UpdateTexture(DirectX::XMMATRIX textureMatrix) {
     TextureBuffer* textureBuffer = (TextureBuffer* )m_ConstantBufferData["Texture"]->m_buffer;
     XMStoreFloat4x4(&textureBuffer->m_tex, XMMatrixTranspose(textureMatrix));
     m_Context->UpdateSubresource(m_ConstantBuffer["Texture"], 0, nullptr, textureBuffer, 0, 0);
-    SetUpdateShaderConstantBuffers(ShaderType::PIXEL,  4, "Texture");
-    SetUpdateShaderConstantBuffers(ShaderType::VERTEX, 4, "Texture");
+    UpdateShaderConstantBuffers(ShaderType::PIXEL,  4, "Texture");
+    UpdateShaderConstantBuffers(ShaderType::VERTEX, 4, "Texture");
 }
 
 // その他定数バッファ更新
-void DirectGraphics::SetUpdateConstantBuffers(int registerNum,std::string bufferName,void* buffer) {
+void DirectGraphics::UpdateConstantBuffers(int registerNum,std::string bufferName,void* buffer) {
     m_Context->UpdateSubresource(m_ConstantBuffer[bufferName], 0, nullptr, buffer, 0, 0);
-    SetUpdateShaderConstantBuffers(ShaderType::PIXEL,  registerNum, bufferName);
-    SetUpdateShaderConstantBuffers(ShaderType::VERTEX, registerNum, bufferName);
+    UpdateShaderConstantBuffers(ShaderType::PIXEL,  registerNum, bufferName);
+    UpdateShaderConstantBuffers(ShaderType::VERTEX, registerNum, bufferName);
 }
 
-void DirectGraphics::SetUpdateShaderConstantBuffers(ShaderType shaderType,int registerIndex,std::string bufferName) {
+void DirectGraphics::UpdateShaderConstantBuffers(ShaderType shaderType,int registerIndex,std::string bufferName) {
     switch (shaderType) {
         case ShaderType::PIXEL:
             m_Context->PSSetConstantBuffers(registerIndex, 1, &m_ConstantBuffer[bufferName]);
@@ -395,7 +395,7 @@ void DirectGraphics::SetUpdateShaderConstantBuffers(ShaderType shaderType,int re
 }
 
 // シェーダー名
-void DirectGraphics::SetUpdateShader(std::string name) {
+void DirectGraphics::UpdateShader(std::string name) {
 	m_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	// プリミティブの形状を指定
 	// VerteXShader、PixelShaderを設定
 	m_Context->VSSetShader(
@@ -410,7 +410,7 @@ void DirectGraphics::SetUpdateShader(std::string name) {
 	m_Context->PSSetShader(m_PixelShader[name]->GetShaderInterface(), nullptr, 0);
 }
 
-void DirectGraphics::SetUpdateRenderTarget(std::string rtvName,std::string dstName) {
+void DirectGraphics::UpdateRenderTarget(std::string rtvName,std::string dstName) {
     // (OutputManger)RenderTagetの指定
     m_Context->OMSetRenderTargets(
         1,							  // 使用するViewの数
@@ -418,7 +418,7 @@ void DirectGraphics::SetUpdateRenderTarget(std::string rtvName,std::string dstNa
         m_DepthStencilView[dstName]); // 使用するDepthStencilView
 }
 
-void DirectGraphics::SetUpdateLayout(std::string layout) {
+void DirectGraphics::UpdateLayout(std::string layout) {
     m_Context->IASetInputLayout(m_InputLayout[layout]);
 }
 
@@ -719,7 +719,7 @@ bool DirectGraphics::CreateShader(std::string shaderName,std::string layoutName,
 	return true;
 }
 
-void DirectGraphics::SetUpdateViewPort(UINT width,UINT height) {
+void DirectGraphics::UpdateViewPort(UINT width,UINT height) {
 	//ビューポートの設定
 	D3D11_VIEWPORT view_port;
 	view_port.TopLeftX = 0;			    // 左上X座標

@@ -69,8 +69,8 @@ std::future<int> SceneManager::DOFade(){
         });
         m_fadeScene->Update();
         DirectGraphics::GetInstance().StartRendering();
-        DirectGraphics::GetInstance().SetUpdateCamera();
-        DirectGraphics::GetInstance().SetUpdateLight();
+        DirectGraphics::GetInstance().UpdateCamera();
+        DirectGraphics::GetInstance().UpdateLight();
         m_fadeScene->Draw();
         DirectGraphics::GetInstance().FinishRendering();
     }

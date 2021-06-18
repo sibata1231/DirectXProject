@@ -204,30 +204,30 @@ void ObjectManager::ShadowRenderer() {
 
     // 影情報描画
     graphics->SetRenderTargets("DepthWrite", "DepthWrite", color);
-    graphics->SetUpdateViewProjection(lightView, lightProj, lightPos, lightDir);
+    graphics->UpdateViewProjection(lightView, lightProj, lightPos, lightDir);
     for (auto itr = m_rendererList.begin(); itr != m_rendererList.end(); itr++) {
         RendererTags tag = itr->first;
         Object*      object = itr->second;
         if (tag != RendererTags::MODEL || object->GetComponent<ModelRenderer>()->m_shadowType == ShadowTypes::NONE) {
             continue;
         }
-        DirectGraphics::GetInstance().SetUpdateShader("DepthWrite");
-        DirectGraphics::GetInstance().SetUpdateLayout("DepthWrite");
+        DirectGraphics::GetInstance().UpdateShader("DepthWrite");
+        DirectGraphics::GetInstance().UpdateLayout("DepthWrite");
         object->Draw();
     }
 
     // 影描画
     graphics->SetRenderTargets("Default", "Default");
-    graphics->SetUpdateCamera();
-    graphics->SetUpdateLight();
+    graphics->UpdateCamera();
+    graphics->UpdateLight();
     ID3D11ShaderResourceView* texture[] = {
         graphics->GetRenderTargetTexture("DepthWrite"),
     };
     graphics->SetTexture(DirectGraphics::TextureData(0, 1, nullptr),"DepthShadow");
     graphics->SetTexture(DirectGraphics::TextureData(1, 1, texture),"DepthShadow");
-    graphics->SetUpdateShader("DepthShadow");
-    graphics->SetUpdateLayout("DepthShadow");
-    graphics->SetUpdateLight(DirectX::XMMatrixTranspose(lightView * lightProj * lightScreen));
+    graphics->UpdateShader("DepthShadow");
+    graphics->UpdateLayout("DepthShadow");
+    graphics->UpdateLight(DirectX::XMMatrixTranspose(lightView * lightProj * lightScreen));
     m_shadow->Draw();
 }
 
@@ -242,8 +242,8 @@ void ObjectManager::ObjectRenderer() {
         }
         if (tag == RendererTags::MODEL || tag == RendererTags::BACKGROUND || tag == RendererTags::MESH) {
             std::string shaderName = object->GetComponent<Renderer>()->m_shaderName;
-            graphics->SetUpdateShader(shaderName);
-            graphics->SetUpdateLayout(shaderName);
+            graphics->UpdateShader(shaderName);
+            graphics->UpdateLayout(shaderName);
         }
         object->Draw();
     }

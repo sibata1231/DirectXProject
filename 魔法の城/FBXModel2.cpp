@@ -14,8 +14,8 @@ void FBX_Model::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX& world, Dir
     UINT stride = sizeof(VERTEX);
     UINT offset = 0;
     DirectGraphics *graphics = &DirectGraphics::GetInstance();
-    graphics->SetUpdateShader("AnimationModel");
-    graphics->SetUpdateLayout("AnimationModel");
+    graphics->UpdateShader("AnimationModel");
+    graphics->UpdateLayout("AnimationModel");
     context->IASetIndexBuffer(IndBuffer, DXGI_FORMAT_R32_UINT, 0); // インデックス情報の指定
 
     // ----- Animation -----
@@ -84,7 +84,7 @@ void FBX_Model::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX& world, Dir
     //context->Unmap(m_constantBuffer, 0);
     //context->VSSetConstantBuffers(0, 1, &m_constantBuffer); // 頂点シェーダーの定数バッファ指定
     //context->PSSetConstantBuffers(0, 1, &m_constantBuffer); // ピクセルシェーダーの定数バッファ指定
-    graphics->SetUpdateWorldMatrixBuffer(world, cb.mWVP);
+    graphics->UpdateWorldMatrixBuffer(world, cb.mWVP);
 
     // パラメータの受け渡し(頂点)
     context->Map(VerBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);

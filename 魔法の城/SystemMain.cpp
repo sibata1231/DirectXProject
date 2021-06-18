@@ -94,8 +94,8 @@ void SystemMain::Update() {
 // 描画処理
 void SystemMain::Draw() {
     DirectGraphics::GetInstance().StartRendering();
-    DirectGraphics::GetInstance().SetUpdateCamera();
-    DirectGraphics::GetInstance().SetUpdateLight();
+    DirectGraphics::GetInstance().UpdateCamera();
+    DirectGraphics::GetInstance().UpdateLight();
 
     SceneManager::GetInstance().Draw();    // シーン描画
 #ifdef _DEBUG

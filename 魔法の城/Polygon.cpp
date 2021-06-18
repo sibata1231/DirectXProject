@@ -80,17 +80,17 @@ void PolygonManager::Draw() {
 	SetVertexPolygon();
 
     DirectGraphics *graphics = &DirectGraphics::GetInstance();
-    graphics->SetUpdateShader("UI");
-    graphics->SetUpdateLayout("UI");
+    graphics->UpdateShader("UI");
+    graphics->UpdateLayout("UI");
 
 	UINT stride = sizeof(UI_VERTEX);
 	UINT offset = 0;
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
     graphics->SetBlendState((int)BlendStates::ALPHABLEND);
     graphics->SetTexture(DirectGraphics::TextureData(0, 1, &m_texture));
-    graphics->SetUpdateViewProjection(XMLoadFloat4x4(&m_view), XMLoadFloat4x4(&m_proj));
-    graphics->SetUpdateTexture(XMLoadFloat4x4(&m_tex));
-    graphics->SetUpdateWorldMatrixBuffer(XMLoadFloat4x4(&m_world), XMLoadFloat4x4(&m_world));
+    graphics->UpdateViewProjection(XMLoadFloat4x4(&m_view), XMLoadFloat4x4(&m_proj));
+    graphics->UpdateTexture(XMLoadFloat4x4(&m_tex));
+    graphics->UpdateWorldMatrixBuffer(XMLoadFloat4x4(&m_world), XMLoadFloat4x4(&m_world));
 
 	// プリミティブ形状をセット
 	m_deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

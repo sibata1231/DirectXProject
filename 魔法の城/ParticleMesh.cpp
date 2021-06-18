@@ -155,8 +155,8 @@ void ParticleMesh::Draw() {
     Emitter             *emitter  = m_parent->GetComponent<Emitter>();
 
     // シェーダ設定
-    graphics->SetUpdateShader(m_renderer->m_shaderName);
-    graphics->SetUpdateLayout(m_renderer->m_shaderName);
+    graphics->UpdateShader(m_renderer->m_shaderName);
+    graphics->UpdateLayout(m_renderer->m_shaderName);
 
 	// 頂点、インデックスバッファをセット
 	UINT stride = sizeof(MESH_VERTEX);
@@ -170,7 +170,7 @@ void ParticleMesh::Draw() {
 
     // ビュー変換
 	XMMATRIX mtxWorld = XMLoadFloat4x4(&m_transform->m_world);
-    graphics->SetUpdateWorldMatrixBuffer(mtxWorld, mtxWorld);
+    graphics->UpdateWorldMatrixBuffer(mtxWorld, mtxWorld);
 
     // テクスチャ行列更新
     ParticleAnimation anim;
@@ -179,10 +179,10 @@ void ParticleMesh::Draw() {
     anim.m_mode = AnimationMode::ONCE_PLAY;
     anim.m_size = XMINT2(1,1);
     SetVertex(anim);
-    graphics->SetUpdateTexture(XMLoadFloat4x4(&m_mtxTexture));
+    graphics->UpdateTexture(XMLoadFloat4x4(&m_mtxTexture));
 
     // マテリアル更新
-    graphics->SetUpdateMaterial(emitter->GetMaterial());
+    graphics->UpdateMaterial(emitter->GetMaterial());
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
     graphics->SetBlendState((int)emitter->GetBlendState());
     graphics->SetZBuffer(true);

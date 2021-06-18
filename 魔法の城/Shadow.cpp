@@ -98,10 +98,10 @@ void Shadow::Draw() {
     // ワールドバッファ更新
 	XMMATRIX mtxWorld = XMLoadFloat4x4(&m_transform->m_world);
     XMMATRIX mWVP     = mtxWorld * XMLoadFloat4x4(&camera->GetView()) * XMLoadFloat4x4(&camera->GetProjection());
-    graphics->SetUpdateWorldMatrixBuffer(mtxWorld, mWVP);
+    graphics->UpdateWorldMatrixBuffer(mtxWorld, mWVP);
 
     // テクスチャバッファ更新
-    graphics->SetUpdateTexture(XMLoadFloat4x4(&m_mtxTexture));
+    graphics->UpdateTexture(XMLoadFloat4x4(&m_mtxTexture));
 
     // マテリアルバッファ更新
     ObjMaterial material;
@@ -113,7 +113,7 @@ void Shadow::Draw() {
         material.SetSpecular(M_SPECULAR.x, M_SPECULAR.y, M_SPECULAR.z, M_SPECULAR.w);
         material.SetEmissive(M_EMISSIVE.x, M_EMISSIVE.y, M_EMISSIVE.z, M_EMISSIVE.w);
     }
-    graphics->SetUpdateMaterial(material);
+    graphics->UpdateMaterial(material);
 
     // 描画設定
     context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);

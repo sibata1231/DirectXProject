@@ -72,8 +72,8 @@ void FbxMeshFile::Render(DirectGraphics* graphics, Vector3 pos, Vector3 scale, V
 		world_matrix = scale_mat * rotate_x * rotate_y * rotate_z * translate;
 
         // 各バッファ更新
-        graphics->SetUpdateWorldMatrixBuffer(world_matrix, world_matrix); // マトリックス
-        graphics->SetUpdateMaterial(m_Materials[mesh.m_MaterialName]);    // マテリアル
+        graphics->UpdateWorldMatrixBuffer(world_matrix, world_matrix); // マトリックス
+        graphics->UpdateMaterial(m_Materials[mesh.m_MaterialName]);    // マテリアル
 
 		// テクスチャ設定
 		if (m_MaterialLinks.count(mesh.m_MaterialName) > 0) {
