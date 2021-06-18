@@ -70,7 +70,41 @@ void Font::Start() {
     rtDesc.MiscFlags = 0;
 
     // フォント用テクスチャを作成
-    DirectGraphics::GetInstance().GetDevice()->CreateTexture2D(&rtDesc, nullptr, &m_layerBuffer);
+    if (FAILED(DirectGraphics::GetInstance().GetDevice()->CreateTexture2D(&rtDesc, nullptr, &m_layerBuffer))) {
+        return;
+    }
+
+    // フォント用テクスチャリソースにテクスチャ情報をコピー
+    D3D11_MAPPED_SUBRESOURCE mappedSubrsrc;
+    DirectGraphics::GetInstance().GetContext()->Map(m_layerBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubrsrc);
+    BYTE* pBits = static_cast<BYTE*>(mappedSubrsrc.pData);
+    INT iOfs_x = gm.gmptGlyphOrigin.x;
+    INT iOfs_y = tm.tmAscent - gm.gmptGlyphOrigin.y;
+    INT iBmp_w = gm.gmBlackBoxX + (4 - (gm.gmBlackBoxX % 4)) % 4;
+    INT iBmp_h = gm.gmBlackBoxY;
+    INT Level = 17;
+    INT x, y;
+    DWORD Alpha, Color;
+    memset(pBits, 0, mappedSubrsrc.RowPitch * tm.tmHeight);
+    for (y = iOfs_y; y < iOfs_y + iBmp_h; y++)
+    {
+        for (x = iOfs_x; x < iOfs_x + iBmp_w; x++)
+        {
+            Alpha = (255 * pMono[x - iOfs_x + iBmp_w * (y - iOfs_y)]) / (Level - 1);
+            Color = 0x00ffffff | (Alpha << 24);
+            memcpy(static_cast<BYTE*>(pBits) + mappedSubrsrc.RowPitch * y + 4 * x, &Color, sizeof(DWORD));
+        }
+    }
+    DirectGraphics::GetInstance().GetContext()->Unmap(m_layerBuffer, 0);
+    // フォント情報の書き込み
+    // iOfs_x, iOfs_y : 書き出し位置(左上)
+    // iBmp_w, iBmp_h : フォントビットマップの幅高
+    // Level : α値の段階 (GGO_GRAY4_BITMAPなので17段階)
+
+    // メモリ解放
+    delete[] pMono;
+
+    // シェーダリソースビューの設定
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
     ZeroMemory(&srvDesc, sizeof(srvDesc));
     srvDesc.Format = rtDesc.Format;
@@ -78,21 +112,26 @@ void Font::Start() {
     srvDesc.Texture2D.MostDetailedMip = 0;
     srvDesc.Texture2D.MipLevels = rtDesc.MipLevels;
 
-    // シェーダリソースビューを作成
-    DirectGraphics::GetInstance().GetDevice()->CreateShaderResourceView(m_layerBuffer, &srvDesc, &m_shaderResourceView);
+    // シェーダリソースビューの設定
+    if (FAILED(DirectGraphics::GetInstance().GetDevice()->CreateShaderResourceView(m_layerBuffer, &srvDesc, &m_shaderResourceView))) {
+        return;
+    }
 
     // Texture設定
     Texture* texture = m_parent->AddComponentIf<Texture>();
     texture->Load(m_shaderResourceView);
 
     RectTransform *transform = m_parent->GetComponent<RectTransform>();
-    transform->m_name      = "FontTest";
-    transform->m_tagName   = "FontTest";
+    transform->m_name        = "Font";
+    transform->m_tagName     = "Font";
 
     transform->m_position.x = -450.0f + 128.0f;
     transform->m_position.y = 224.0f;
     transform->m_scale.x    = 128.0f;
     transform->m_scale.y    = 128.0f;
+    
+    //transform->m_uv        = XMFLOAT2(1.0f / iOfs_x, 1.0f / iOfs_y);
+    //transform->m_frameSize = XMFLOAT2(1.0f / iBmp_w, 1.0f / iBmp_h);
 }
 
 void Font::Update() {

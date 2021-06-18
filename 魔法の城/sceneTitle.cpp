@@ -29,20 +29,20 @@ void SceneTitle::Init() {
     }*/
 
     // テスト画像
-    {
-        Object* object = new Object(nullptr);
-        object->m_transform->m_name = "DepthWriteImage";
-        Texture* texture = object->AddComponent<Texture>();
-        //texture->Load("Resources/texture/_sky.png");
-        texture->Load(DirectGraphics::GetInstance().GetRenderTargetTexture("DepthWrite"));
-        RectTransform *transform = object->GetComponent<RectTransform>();
-        transform->m_position.x = -450.0f;
-        transform->m_position.y = 224.0f;
-        transform->m_scale.x = 128.0f;
-        transform->m_scale.y = 128.0f;
-        m_objectManager.Add(object);
-    }
-    // テスト画像
+    //{
+    //    Object* object = new Object(nullptr);
+    //    object->m_transform->m_name = "DepthWriteImage";
+    //    Texture* texture = object->AddComponent<Texture>();
+    //    //texture->Load("Resources/texture/_sky.png");
+    //    texture->Load(DirectGraphics::GetInstance().GetRenderTargetTexture("DepthWrite"));
+    //    RectTransform *transform = object->GetComponent<RectTransform>();
+    //    transform->m_position.x = -450.0f;
+    //    transform->m_position.y = 224.0f;
+    //    transform->m_scale.x = 128.0f;
+    //    transform->m_scale.y = 128.0f;
+    //    m_objectManager.Add(object);
+    //}
+    // フォント画像
     {
         Object* object = new Object(nullptr);
         object->AddComponent<Font>();
@@ -67,6 +67,7 @@ void SceneTitle::Init() {
     {
         Object* object = new Object(nullptr);
         object->AddComponent<Player>();
+        object->m_transform->m_name = "Player";
         m_objectManager.Add(object);
     }
     //// プレイヤーの生成
