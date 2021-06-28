@@ -1,4 +1,4 @@
-#include <Windows.h>
+ï»¿#include <Windows.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <vector>
@@ -49,20 +49,20 @@ void FbxMeshFile::Render(DirectGraphics* graphics, Vector3 pos, Vector3 scale, V
 	UINT offsets = 0;
     
 	for (auto& mesh : m_MeshList) {
-		// IA‚Éİ’è‚·‚é’¸“_ƒoƒbƒtƒ@‚Ìw’è
+		// IAã«è¨­å®šã™ã‚‹é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®æŒ‡å®š
 		graphics->GetContext()->IASetVertexBuffers(
-				0,								// ƒoƒbƒtƒ@‘—M‚ÌƒXƒƒbƒg”Ô†
-				1,								// ƒoƒbƒtƒ@‚Ì”
-				&mesh.m_VertexBuffer,	        // ’¸“_ƒoƒbƒtƒ@
-				&strides,						// ƒoƒbƒtƒ@‚Ég—p‚µ‚Ä‚¢‚é\‘¢‘Ì‚ÌƒTƒCƒY
-				&offsets);						// ŠJnƒIƒtƒZƒbƒg
-        // IA‚Éİ’è‚·‚éƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìw’è
+				0,								// ãƒãƒƒãƒ•ã‚¡é€ä¿¡ã®ã‚¹ãƒ­ãƒƒãƒˆç•ªå·
+				1,								// ãƒãƒƒãƒ•ã‚¡ã®æ•°
+				&mesh.m_VertexBuffer,	        // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡
+				&strides,						// ãƒãƒƒãƒ•ã‚¡ã«ä½¿ç”¨ã—ã¦ã„ã‚‹æ§‹é€ ä½“ã®ã‚µã‚¤ã‚º
+				&offsets);						// é–‹å§‹ã‚ªãƒ•ã‚»ãƒƒãƒˆ
+        // IAã«è¨­å®šã™ã‚‹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®æŒ‡å®š
 		graphics->GetContext()->IASetIndexBuffer(
 				mesh.m_IndexBuffer,
 				DXGI_FORMAT_R32_UINT,
 				0);
 
-		// ƒ[ƒ‹ƒhƒ}ƒgƒŠƒNƒXİ’è
+		// ãƒ¯ãƒ¼ãƒ«ãƒ‰ãƒãƒˆãƒªã‚¯ã‚¹è¨­å®š
 		DirectX::XMMATRIX world_matrix;
 		DirectX::XMMATRIX translate = DirectX::XMMatrixTranslation(pos.x, pos.y, pos.z);
 		DirectX::XMMATRIX rotate_x = DirectX::XMMatrixRotationX(DirectX::XMConvertToRadians(degree.x));
@@ -71,53 +71,53 @@ void FbxMeshFile::Render(DirectGraphics* graphics, Vector3 pos, Vector3 scale, V
 		DirectX::XMMATRIX scale_mat = DirectX::XMMatrixScaling(scale.x, scale.y, scale.z);
 		world_matrix = scale_mat * rotate_x * rotate_y * rotate_z * translate;
 
-        // Šeƒoƒbƒtƒ@XV
-        graphics->UpdateWorldMatrixBuffer(world_matrix, world_matrix); // ƒ}ƒgƒŠƒbƒNƒX
-        graphics->UpdateMaterial(m_Materials[mesh.m_MaterialName]);    // ƒ}ƒeƒŠƒAƒ‹
+        // å„ãƒãƒƒãƒ•ã‚¡æ›´æ–°
+        graphics->UpdateWorldMatrixBuffer(world_matrix, world_matrix); // ãƒãƒˆãƒªãƒƒã‚¯ã‚¹
+        graphics->UpdateMaterial(m_Materials[mesh.m_MaterialName]);    // ãƒãƒ†ãƒªã‚¢ãƒ«
 
-		// ƒeƒNƒXƒ`ƒƒİ’è
+		// ãƒ†ã‚¯ã‚¹ãƒãƒ£è¨­å®š
 		if (m_MaterialLinks.count(mesh.m_MaterialName) > 0) {
-            graphics->SetTexture(DirectGraphics::TextureData(0, 1, &m_MaterialLinks[mesh.m_MaterialName]));
+            graphics->SetTexture(DirectGraphics::ShaderType::TYPE_PIXEL, DirectGraphics::TextureData(0, 1, &m_MaterialLinks[mesh.m_MaterialName]));
 		} else {
-            graphics->SetTexture(DirectGraphics::TextureData(0, 1, nullptr));
+            graphics->SetTexture(DirectGraphics::ShaderType::TYPE_PIXEL, DirectGraphics::TextureData(0, 1, nullptr));
 		}
 
-		// •`‰æ
+		// æç”»
 		graphics->GetContext()->DrawIndexed(
-				(UINT)mesh.m_Indices.size(),// ’¸“_”
-				0,						    // ƒIƒtƒZƒbƒg
-				0);						    // ŠJn’¸“_‚ÌƒCƒ“ƒfƒbƒNƒX
+				(UINT)mesh.m_Indices.size(),// é ‚ç‚¹æ•°
+				0,						    // ã‚ªãƒ•ã‚»ãƒƒãƒˆ
+				0);						    // é–‹å§‹é ‚ç‚¹ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
 	}
 }
 
 void FbxMeshFile::LoadVertices(MeshData& mesh_data, FbxMesh* mesh) {
-	// ’¸“_ƒoƒbƒtƒ@‚Ìæ“¾
+	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®å–å¾—
 	FbxVector4* vertices = mesh->GetControlPoints();
-	// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ìæ“¾
+	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®å–å¾—
 	int* indices = mesh->GetPolygonVertices();
-	// ’¸“_À•W‚Ì”‚Ìæ“¾
+	// é ‚ç‚¹åº§æ¨™ã®æ•°ã®å–å¾—
 	int polygon_vertex_count = mesh->GetPolygonVertexCount();
-	// GetPolygonVertexCount => ’¸“_”
+	// GetPolygonVertexCount => é ‚ç‚¹æ•°
 	for (int i = 0; i < polygon_vertex_count; i++) {
 		CustomVertex vertex;
-		// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚©‚ç’¸“_”Ô†‚ğæ“¾
+		// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‹ã‚‰é ‚ç‚¹ç•ªå·ã‚’å–å¾—
 		int index = indices[i];
 
-		// ’¸“_À•WƒŠƒXƒg‚©‚çÀ•W‚ğæ“¾‚·‚é
+		// é ‚ç‚¹åº§æ¨™ãƒªã‚¹ãƒˆã‹ã‚‰åº§æ¨™ã‚’å–å¾—ã™ã‚‹
 		vertex.Posision.x = (float)-vertices[index][0];
 		vertex.Posision.y = (float)vertices[index][1];
 		vertex.Posision.z = (float)vertices[index][2];
 
-		// ’Ç‰Á
+		// è¿½åŠ 
 		mesh_data.m_Vertices.push_back(vertex);
 	}
 }
 
 void FbxMeshFile::LoadIndices(MeshData& mesh_data, FbxMesh* mesh) {
-	// ƒ|ƒŠƒSƒ“”‚Ìæ“¾
+	// ãƒãƒªã‚´ãƒ³æ•°ã®å–å¾—
 	int polygon_count = mesh->GetPolygonCount();
 
-	// ƒ|ƒŠƒSƒ“‚Ì”‚¾‚¯˜A”Ô‚Æ‚µ‚Ä•Û‘¶‚·‚é
+	// ãƒãƒªã‚´ãƒ³ã®æ•°ã ã‘é€£ç•ªã¨ã—ã¦ä¿å­˜ã™ã‚‹
 	for (int i = 0; i < polygon_count; i++) {
 		mesh_data.m_Indices.push_back(i * 3 + 2);
 		mesh_data.m_Indices.push_back(i * 3 + 1);
@@ -127,10 +127,10 @@ void FbxMeshFile::LoadIndices(MeshData& mesh_data, FbxMesh* mesh) {
 
 void FbxMeshFile::LoadNormals(MeshData& mesh_data, FbxMesh* mesh) {
 	FbxArray<FbxVector4> normals;
-	// –@üƒŠƒXƒg‚Ìæ“¾
+	// æ³•ç·šãƒªã‚¹ãƒˆã®å–å¾—
 	mesh->GetPolygonVertexNormals(normals);
 
-	// –@üİ’è
+	// æ³•ç·šè¨­å®š
 	for (int i = 0; i < normals.Size(); i++) {
 		mesh_data.m_Vertices[i].Normal.x = (float)-normals[i][0];
 		mesh_data.m_Vertices[i].Normal.y = (float)normals[i][1];
@@ -139,13 +139,13 @@ void FbxMeshFile::LoadNormals(MeshData& mesh_data, FbxMesh* mesh) {
 }
 
 void FbxMeshFile::LoadColors(MeshData& mesh_data, FbxMesh* mesh) {
-	// ’¸“_ƒJƒ‰[ƒf[ƒ^‚Ì”‚ğŠm”F
+	// é ‚ç‚¹ã‚«ãƒ©ãƒ¼ãƒ‡ãƒ¼ã‚¿ã®æ•°ã‚’ç¢ºèª
 	int color_count = mesh->GetElementVertexColorCount();
 	if (color_count == 0) {
 		return;
 	}
 	
-	// ’¸“_ƒJƒ‰[ƒf[ƒ^‚Ìæ“¾
+	// é ‚ç‚¹ã‚«ãƒ©ãƒ¼ãƒ‡ãƒ¼ã‚¿ã®å–å¾—
 	FbxGeometryElementVertexColor* vertex_colors = mesh->GetElementVertexColor(0);
 
 	if (vertex_colors == nullptr) {
@@ -157,9 +157,9 @@ void FbxMeshFile::LoadColors(MeshData& mesh_data, FbxMesh* mesh) {
 
 	if (mapping_mode == FbxLayerElement::eByPolygonVertex) {
 		if (reference_mode == FbxLayerElement::eIndexToDirect) {
-			// ’¸“_ƒJƒ‰[ƒoƒbƒtƒ@æ“¾
+			// é ‚ç‚¹ã‚«ãƒ©ãƒ¼ãƒãƒƒãƒ•ã‚¡å–å¾—
 			FbxLayerElementArrayTemplate<FbxColor>& colors = vertex_colors->GetDirectArray();
-			// ’¸“_ƒJƒ‰[ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@æ“¾
+			// é ‚ç‚¹ã‚«ãƒ©ãƒ¼ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡å–å¾—
 			FbxLayerElementArrayTemplate<int>& indeces = vertex_colors->GetIndexArray();
 			for (int i = 0; i < indeces.GetCount(); i++ ){
 				int id = indeces.GetAt(i);
@@ -175,32 +175,32 @@ void FbxMeshFile::LoadColors(MeshData& mesh_data, FbxMesh* mesh) {
 
 void FbxMeshFile::LoadUV(MeshData& mesh_data, FbxMesh* mesh) {
 	FbxStringList uvset_names;
-	// UVSet‚Ì–¼‘OƒŠƒXƒg‚ğæ“¾
+	// UVSetã®åå‰ãƒªã‚¹ãƒˆã‚’å–å¾—
 	mesh->GetUVSetNames(uvset_names);
 
 	FbxArray<FbxVector2> uv_buffer;
 
-	// UVSet‚Ì–¼‘O‚©‚çUVSet‚ğæ“¾‚·‚é
-	// ¡‰ñ‚Íƒ}ƒ‹ƒ`ƒeƒNƒXƒ`ƒƒ‚É‚Í‘Î‰‚µ‚È‚¢‚Ì‚ÅÅ‰‚Ì–¼‘O‚ğg‚¤
+	// UVSetã®åå‰ã‹ã‚‰UVSetã‚’å–å¾—ã™ã‚‹
+	// ä»Šå›ã¯ãƒãƒ«ãƒãƒ†ã‚¯ã‚¹ãƒãƒ£ã«ã¯å¯¾å¿œã—ãªã„ã®ã§æœ€åˆã®åå‰ã‚’ä½¿ã†
 	mesh->GetPolygonVertexUVs(uvset_names.GetStringAt(0), uv_buffer);
 
 	for (int i = 0; i < uv_buffer.Size(); i++) {
 		FbxVector2& uv = uv_buffer[i];
 
-		// ‚»‚Ì‚Ü‚Üg—p‚µ‚Ä–â‘è‚È‚¢
+		// ãã®ã¾ã¾ä½¿ç”¨ã—ã¦å•é¡Œãªã„
 		mesh_data.m_Vertices[i].TexturePos.X = (float)uv[0];
 		mesh_data.m_Vertices[i].TexturePos.Y = (float)(1.0 - uv[1]);
 	}
 }
 
 void FbxMeshFile::SetMaterialName(MeshData& mesh_data, FbxMesh* mesh) {
-	// ƒ}ƒeƒŠƒAƒ‹‚ª–³‚¯‚ê‚ÎI‚í‚è
+	// ãƒãƒ†ãƒªã‚¢ãƒ«ãŒç„¡ã‘ã‚Œã°çµ‚ã‚ã‚Š
 	if (mesh->GetElementMaterialCount() == 0) {
 		mesh_data.m_MaterialName = "";
 		return;
 	}
 
-	// Mesh‘¤‚Ìƒ}ƒeƒŠƒAƒ‹î•ñ‚ğæ“¾
+	// Meshå´ã®ãƒãƒ†ãƒªã‚¢ãƒ«æƒ…å ±ã‚’å–å¾—
 	FbxLayerElementMaterial* material = mesh->GetElementMaterial(0);
 	int index = material->GetIndexArray().GetAt(0);
 	FbxSurfaceMaterial* surface_material = mesh->GetNode()->GetSrcObject<FbxSurfaceMaterial>(index);
@@ -216,26 +216,26 @@ bool FbxMeshFile::LoadTexture(FbxFileTexture* texture, std::string& keyword) {
 		return false;
 	}
 
-	// ƒtƒ@ƒCƒ‹–¼‚ğæ“¾
+	// ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—
 	std::string file_path = texture->GetRelativeFileName();
 
-	// ƒtƒ@ƒCƒ‹•ª‰ğ
+	// ãƒ•ã‚¡ã‚¤ãƒ«åˆ†è§£
 	char buffer[256];
 	ZeroMemory(buffer, sizeof(char) * 256);
 	memcpy(buffer, file_path.c_str(), sizeof(char) * 256);
 
-	// ‹L†“ˆê
+	// è¨˜å·çµ±ä¸€
 	Replace('\\', '/', buffer);
 	std::vector<std::string> split_list;
 	std::string replace_file_name = buffer;
-	// u/v‚Å•ª‰ğ
+	// ã€Œ/ã€ã§åˆ†è§£
 	Split('/', buffer, split_list);
 
 	std::string root_path = "Resources/Texture/";
 	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> cv;
 	std::wstring wstr_file_name = cv.from_bytes(root_path + split_list[split_list.size() - 1]);
 
-	// •¶š‰»‚¯‘Îô
+	// æ–‡å­—åŒ–ã‘å¯¾ç­–
 	char* file_name;
 	size_t size = 0;
 	FbxUTF8ToAnsi(split_list[split_list.size() - 1].c_str(), file_name, &size);
@@ -248,8 +248,8 @@ bool FbxMeshFile::LoadTexture(FbxFileTexture* texture, std::string& keyword) {
 
 	if (FAILED(CreateTextureFromFile(
 		DirectGraphics::GetInstance().GetDevice(),			// ID3D11Device
-		wstr_file_name.c_str(),								// ƒtƒ@ƒCƒ‹–¼(wchar_tŒ^‚È‚Ì‚Å’ˆÓ)
-		&m_Textures[file_name])))							// ƒVƒF[ƒ_‚Åg—p‚·‚é‚±‚Æ‚ª‚Å‚«‚éƒeƒNƒXƒ`ƒƒƒf[ƒ^
+		wstr_file_name.c_str(),								// ãƒ•ã‚¡ã‚¤ãƒ«å(wchar_tå‹ãªã®ã§æ³¨æ„)
+		&m_Textures[file_name])))							// ã‚·ã‚§ãƒ¼ãƒ€ã§ä½¿ç”¨ã™ã‚‹ã“ã¨ãŒã§ãã‚‹ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ‡ãƒ¼ã‚¿
 	{
 		FbxFree(file_name);
 		return false;
@@ -310,17 +310,17 @@ void FbxMeshFile::LoadMaterial(FbxSurfaceMaterial* material) {
 
 	m_Materials[material->GetName()] = entry_material;
 
-	// ƒeƒNƒXƒ`ƒƒ“Ç‚İ‚İ(ƒVƒ“ƒOƒ‹‘Î‰)
-	// DiffuseƒvƒƒpƒeƒB‚ğæ“¾
+	// ãƒ†ã‚¯ã‚¹ãƒãƒ£èª­ã¿è¾¼ã¿(ã‚·ãƒ³ã‚°ãƒ«å¯¾å¿œ)
+	// Diffuseãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã‚’å–å¾—
 	prop = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
 	FbxFileTexture* texture = nullptr;
 	std::string keyword;
 	int texture_num = prop.GetSrcObjectCount<FbxFileTexture>();
 	if (texture_num > 0) {
-		// prop‚©‚çFbxFileTexture‚ğæ“¾	
+		// propã‹ã‚‰FbxFileTextureã‚’å–å¾—	
 		texture = prop.GetSrcObject<FbxFileTexture>(0);
 	} else {
-		// FbxLayeredTexture‚©‚çFbxFileTexture‚ğæ“¾	
+		// FbxLayeredTextureã‹ã‚‰FbxFileTextureã‚’å–å¾—	
 		int layer_num = prop.GetSrcObjectCount<FbxLayeredTexture>();
 		if (layer_num > 0) {
 			texture = prop.GetSrcObject<FbxFileTexture>(0);
@@ -329,7 +329,7 @@ void FbxMeshFile::LoadMaterial(FbxSurfaceMaterial* material) {
 
 	if (texture != nullptr &&
 		LoadTexture(texture, keyword) == true) {
-		// “Ç‚İ‚ñ‚¾ƒeƒNƒXƒ`ƒƒ‚Æƒ}ƒeƒŠƒAƒ‹‚ÌŠÖŒW‚ğŠo‚¦‚Ä‚¨‚­
+		// èª­ã¿è¾¼ã‚“ã ãƒ†ã‚¯ã‚¹ãƒãƒ£ã¨ãƒãƒ†ãƒªã‚¢ãƒ«ã®é–¢ä¿‚ã‚’è¦šãˆã¦ãŠã
 		m_MaterialLinks[material->GetName()] = m_Textures[keyword];
 	}
 }
@@ -347,20 +347,20 @@ void FbxMeshFile::CreateMesh(FbxMesh* mesh) {
 }
 
 bool FbxMeshFile::LoadFbxFile(std::vector<std::string>& out_material_list, const char* file_path, const char* file_name) {
-	// FbxManagerì¬
+	// FbxManagerä½œæˆ
 	FbxManager* fbx_manager = fbxsdk::FbxManager::Create();
 	if (fbx_manager == nullptr) {
 		return false;
 	}
 	
-	// FbxImporterì¬
+	// FbxImporterä½œæˆ
 	FbxImporter* fbx_importer = FbxImporter::Create(fbx_manager, "");
 	if (fbx_importer == nullptr) {
 		fbx_manager->Destroy();
 		return false;
 	}
 	
-	// FbxSceneì¬
+	// FbxSceneä½œæˆ
 	FbxScene* fbx_scene = FbxScene::Create(fbx_manager, "");
 	if (fbx_scene == nullptr) {
 		fbx_importer->Destroy();
@@ -368,15 +368,15 @@ bool FbxMeshFile::LoadFbxFile(std::vector<std::string>& out_material_list, const
 		return false;
 	}
 
-	// File‚ğ‰Šú‰»
+	// Fileã‚’åˆæœŸåŒ–
 	fbx_importer->Initialize(file_name);
-	// scene‚ÉƒCƒ“ƒ|[ƒg
+	// sceneã«ã‚¤ãƒ³ãƒãƒ¼ãƒˆ
 	fbx_importer->Import(fbx_scene);
 
 	FbxGeometryConverter converter(fbx_manager);
-	// ƒƒbƒVƒ…‚Ég‚í‚ê‚Ä‚¢‚éƒ}ƒeƒŠƒAƒ‹’PˆÊ‚ÅƒƒbƒVƒ…‚ğ•ªŠ„‚·‚é
+	// ãƒ¡ãƒƒã‚·ãƒ¥ã«ä½¿ã‚ã‚Œã¦ã„ã‚‹ãƒãƒ†ãƒªã‚¢ãƒ«å˜ä½ã§ãƒ¡ãƒƒã‚·ãƒ¥ã‚’åˆ†å‰²ã™ã‚‹
 	converter.SplitMeshesPerMaterial(fbx_scene, true);
-	// ƒ|ƒŠƒSƒ“‚ğOŠpŒ`‚É‚·‚é
+	// ãƒãƒªã‚´ãƒ³ã‚’ä¸‰è§’å½¢ã«ã™ã‚‹
 	converter.Triangulate(fbx_scene, true);
 
 	int material_num = fbx_scene->GetSrcObjectCount<FbxSurfaceMaterial>();
@@ -385,11 +385,11 @@ bool FbxMeshFile::LoadFbxFile(std::vector<std::string>& out_material_list, const
 		LoadMaterial(fbx_scene->GetSrcObject<FbxSurfaceMaterial>(i));
 	}
 
-	// FbxMesh‚Ì”‚ğæ“¾
+	// FbxMeshã®æ•°ã‚’å–å¾—
 	int mesh_num = fbx_scene->GetSrcObjectCount<FbxMesh>();
 
 	for (int i = 0; i < mesh_num; i++) {
-		// Meshì¬
+		// Meshä½œæˆ
 		CreateMesh(fbx_scene->GetSrcObject<FbxMesh>(i));
 	}
 
@@ -412,25 +412,25 @@ bool FbxMeshFile::LoadFbxFile(std::vector<std::string>& out_material_list, const
 
 bool FbxMeshFile::CreateVertexBuffer(ID3D11Device* device) {
 	for (auto& mesh : m_MeshList) {
-		//’¸“_ƒoƒbƒtƒ@ì¬
+		//é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ä½œæˆ
 		D3D11_BUFFER_DESC buffer_desc;
-		buffer_desc.ByteWidth = (UINT)(sizeof(CustomVertex) * mesh.m_Vertices.size());	// ƒoƒbƒtƒ@‚ÌƒTƒCƒY
-		buffer_desc.Usage = D3D11_USAGE_DEFAULT;			// g—p•û–@
-		buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;	// BINDİ’è
-		buffer_desc.CPUAccessFlags = 0;						// ƒŠƒ\[ƒX‚Ö‚ÌCPU‚ÌƒAƒNƒZƒXŒ ŒÀ‚É‚Â‚¢‚Ä‚Ìİ’è
-		buffer_desc.MiscFlags = 0;							// ƒŠƒ\[ƒXƒIƒvƒVƒ‡ƒ“‚Ìƒtƒ‰ƒO
-		buffer_desc.StructureByteStride = 0;				// \‘¢‘Ì‚ÌƒTƒCƒY
+		buffer_desc.ByteWidth = (UINT)(sizeof(CustomVertex) * mesh.m_Vertices.size());	// ãƒãƒƒãƒ•ã‚¡ã®ã‚µã‚¤ã‚º
+		buffer_desc.Usage = D3D11_USAGE_DEFAULT;			// ä½¿ç”¨æ–¹æ³•
+		buffer_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;	// BINDè¨­å®š
+		buffer_desc.CPUAccessFlags = 0;						// ãƒªã‚½ãƒ¼ã‚¹ã¸ã®CPUã®ã‚¢ã‚¯ã‚»ã‚¹æ¨©é™ã«ã¤ã„ã¦ã®è¨­å®š
+		buffer_desc.MiscFlags = 0;							// ãƒªã‚½ãƒ¼ã‚¹ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®ãƒ•ãƒ©ã‚°
+		buffer_desc.StructureByteStride = 0;				// æ§‹é€ ä½“ã®ã‚µã‚¤ã‚º
 
 		D3D11_SUBRESOURCE_DATA sub_resource;
-		sub_resource.pSysMem = &mesh.m_Vertices[0];	// ƒoƒbƒtƒ@‚Ì’†g‚Ìİ’è
-		sub_resource.SysMemPitch = 0;			// textureƒf[ƒ^‚ğg—p‚·‚éÛ‚Ég—p‚·‚éƒƒ“ƒo
-		sub_resource.SysMemSlicePitch = 0;		// textureƒf[ƒ^‚ğg—p‚·‚éÛ‚Ég—p‚·‚éƒƒ“ƒo
+		sub_resource.pSysMem = &mesh.m_Vertices[0];	// ãƒãƒƒãƒ•ã‚¡ã®ä¸­èº«ã®è¨­å®š
+		sub_resource.SysMemPitch = 0;			// textureãƒ‡ãƒ¼ã‚¿ã‚’ä½¿ç”¨ã™ã‚‹éš›ã«ä½¿ç”¨ã™ã‚‹ãƒ¡ãƒ³ãƒ
+		sub_resource.SysMemSlicePitch = 0;		// textureãƒ‡ãƒ¼ã‚¿ã‚’ä½¿ç”¨ã™ã‚‹éš›ã«ä½¿ç”¨ã™ã‚‹ãƒ¡ãƒ³ãƒ
 
-		// ƒoƒbƒtƒ@ì¬
+		// ãƒãƒƒãƒ•ã‚¡ä½œæˆ
 		if (FAILED(device->CreateBuffer(
-			&buffer_desc,						// ƒoƒbƒtƒ@î•ñ
-			&sub_resource,						// ƒŠƒ\[ƒXî•ñ
-			&mesh.m_VertexBuffer)))	            // ì¬‚³‚ê‚½ƒoƒbƒtƒ@‚ÌŠi”[æ
+			&buffer_desc,						// ãƒãƒƒãƒ•ã‚¡æƒ…å ±
+			&sub_resource,						// ãƒªã‚½ãƒ¼ã‚¹æƒ…å ±
+			&mesh.m_VertexBuffer)))	            // ä½œæˆã•ã‚ŒãŸãƒãƒƒãƒ•ã‚¡ã®æ ¼ç´å…ˆ
 		{
 			return false;
 		}
@@ -441,25 +441,25 @@ bool FbxMeshFile::CreateVertexBuffer(ID3D11Device* device) {
 
 bool FbxMeshFile::CreateIndexBuffer(ID3D11Device* device) {
 	for (auto& mesh : m_MeshList) {
-		//’¸“_ƒoƒbƒtƒ@ì¬
+		//é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ä½œæˆ
 		D3D11_BUFFER_DESC buffer_desc;
-		buffer_desc.ByteWidth = (UINT)(sizeof(UINT) * mesh.m_Indices.size());	    // ƒoƒbƒtƒ@‚ÌƒTƒCƒY
-		buffer_desc.Usage = D3D11_USAGE_DEFAULT;							// g—p•û–@
-		buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;					// BINDİ’è
-		buffer_desc.CPUAccessFlags = 0;										// ƒŠƒ\[ƒX‚Ö‚ÌCPU‚ÌƒAƒNƒZƒXŒ ŒÀ‚É‚Â‚¢‚Ä‚Ìİ’è
-		buffer_desc.MiscFlags = 0;											// ƒŠƒ\[ƒXƒIƒvƒVƒ‡ƒ“‚Ìƒtƒ‰ƒO
-		buffer_desc.StructureByteStride = 0;								// \‘¢‘Ì‚ÌƒTƒCƒY
+		buffer_desc.ByteWidth = (UINT)(sizeof(UINT) * mesh.m_Indices.size());	    // ãƒãƒƒãƒ•ã‚¡ã®ã‚µã‚¤ã‚º
+		buffer_desc.Usage = D3D11_USAGE_DEFAULT;							// ä½¿ç”¨æ–¹æ³•
+		buffer_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;					// BINDè¨­å®š
+		buffer_desc.CPUAccessFlags = 0;										// ãƒªã‚½ãƒ¼ã‚¹ã¸ã®CPUã®ã‚¢ã‚¯ã‚»ã‚¹æ¨©é™ã«ã¤ã„ã¦ã®è¨­å®š
+		buffer_desc.MiscFlags = 0;											// ãƒªã‚½ãƒ¼ã‚¹ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã®ãƒ•ãƒ©ã‚°
+		buffer_desc.StructureByteStride = 0;								// æ§‹é€ ä½“ã®ã‚µã‚¤ã‚º
 
 		D3D11_SUBRESOURCE_DATA sub_resource;
-		sub_resource.pSysMem = &mesh.m_Indices[0];							// ƒoƒbƒtƒ@‚Ì’†g‚Ìİ’è
-		sub_resource.SysMemPitch = 0;										// textureƒf[ƒ^‚ğg—p‚·‚éÛ‚Ég—p‚·‚éƒƒ“ƒo
-		sub_resource.SysMemSlicePitch = 0;									// textureƒf[ƒ^‚ğg—p‚·‚éÛ‚Ég—p‚·‚éƒƒ“ƒo
+		sub_resource.pSysMem = &mesh.m_Indices[0];							// ãƒãƒƒãƒ•ã‚¡ã®ä¸­èº«ã®è¨­å®š
+		sub_resource.SysMemPitch = 0;										// textureãƒ‡ãƒ¼ã‚¿ã‚’ä½¿ç”¨ã™ã‚‹éš›ã«ä½¿ç”¨ã™ã‚‹ãƒ¡ãƒ³ãƒ
+		sub_resource.SysMemSlicePitch = 0;									// textureãƒ‡ãƒ¼ã‚¿ã‚’ä½¿ç”¨ã™ã‚‹éš›ã«ä½¿ç”¨ã™ã‚‹ãƒ¡ãƒ³ãƒ
 
-		// ƒoƒbƒtƒ@ì¬
+		// ãƒãƒƒãƒ•ã‚¡ä½œæˆ
 		if (FAILED(device->CreateBuffer(
-			&buffer_desc,						// ƒoƒbƒtƒ@î•ñ
-			&sub_resource,						// ƒŠƒ\[ƒXî•ñ
-			&mesh.m_IndexBuffer)))		// ì¬‚³‚ê‚½ƒoƒbƒtƒ@‚ÌŠi”[æ
+			&buffer_desc,						// ãƒãƒƒãƒ•ã‚¡æƒ…å ±
+			&sub_resource,						// ãƒªã‚½ãƒ¼ã‚¹æƒ…å ±
+			&mesh.m_IndexBuffer)))		// ä½œæˆã•ã‚ŒãŸãƒãƒƒãƒ•ã‚¡ã®æ ¼ç´å…ˆ
 		{
 			return false;
 		}

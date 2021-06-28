@@ -147,7 +147,8 @@ void Terrain::Draw() {
         m_texture,
         m_bumpTexture,
     };
-    graphics->SetTexture(DirectGraphics::TextureData(0, 2, texture));
+
+    graphics->SetTexture(DirectGraphics::ShaderType::TYPE_PIXEL, DirectGraphics::TextureData(0, 2, texture));
 
     // ワールドバッファ更新
 	XMMATRIX mtxWorld = XMLoadFloat4x4(&m_transform->m_world);

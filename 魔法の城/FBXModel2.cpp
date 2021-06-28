@@ -1,4 +1,4 @@
-
+ï»¿
 #include "FBXModel2.h"
 #include "Shader.h"
 #include "DirectGraphics.h"
@@ -10,35 +10,36 @@ FBX_Model::~FBX_Model() {
 }
 
 void FBX_Model::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX& world, DirectX::XMMATRIX& view, DirectX::XMMATRIX& proj) {    
-    // <ƒIƒuƒWƒFƒNƒg‚Ì”½‰f>
+    // <ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã®åæ˜ >
     UINT stride = sizeof(VERTEX);
     UINT offset = 0;
     DirectGraphics *graphics = &DirectGraphics::GetInstance();
-    graphics->UpdateShader("AnimationModel");
+    graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_VERTEX, "AnimationModel");
+    graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_PIXEL,  "AnimationModel");
     graphics->UpdateLayout("AnimationModel");
-    context->IASetIndexBuffer(IndBuffer, DXGI_FORMAT_R32_UINT, 0); // ƒCƒ“ƒfƒbƒNƒXî•ñ‚Ìw’è
+    context->IASetIndexBuffer(IndBuffer, DXGI_FORMAT_R32_UINT, 0); // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹æƒ…å ±ã®æŒ‡å®š
 
     // ----- Animation -----
     timeCount += FrameTime;
     if (timeCount > stop) {
         timeCount = start;
     }
-    // ˆÚ“®A‰ñ“]AŠg‘å‚Ì‚½‚ß‚Ìs—ñ‚ğì¬
+    // ç§»å‹•ã€å›è»¢ã€æ‹¡å¤§ã®ãŸã‚ã®è¡Œåˆ—ã‚’ä½œæˆ
     FbxMatrix globalPosition = m_meshNode->EvaluateGlobalTransform(timeCount);
     FbxVector4 t0 = m_meshNode->GetGeometricTranslation(FbxNode::eSourcePivot);
     FbxVector4 r0 = m_meshNode->GetGeometricRotation(FbxNode::eSourcePivot);
     FbxVector4 s0 = m_meshNode->GetGeometricScaling(FbxNode::eSourcePivot);
     FbxAMatrix geometryOffset = FbxAMatrix(t0, r0, s0);
 
-    // Še’¸“_‚ÉŠ|‚¯‚é‚½‚ß‚ÌÅI“I‚Ès—ñ‚Ì”z—ñ
+    // å„é ‚ç‚¹ã«æ›ã‘ã‚‹ãŸã‚ã®æœ€çµ‚çš„ãªè¡Œåˆ—ã®é…åˆ—
     FbxMatrix *clusterDeformation = new FbxMatrix[m_mesh->GetControlPointsCount()];
     memset(clusterDeformation, 0, sizeof(FbxMatrix) * m_mesh->GetControlPointsCount());
 
     FbxSkin *skinDeformer = (FbxSkin *)m_mesh->GetDeformer(0, FbxDeformer::eSkin);
     int clusterCount = skinDeformer->GetClusterCount();
-    // ŠeƒNƒ‰ƒXƒ^‚©‚çŠe’¸“_‚É‰e‹¿‚ğ—^‚¦‚é‚½‚ß‚Ìs—ñì¬
+    // å„ã‚¯ãƒ©ã‚¹ã‚¿ã‹ã‚‰å„é ‚ç‚¹ã«å½±éŸ¿ã‚’ä¸ãˆã‚‹ãŸã‚ã®è¡Œåˆ—ä½œæˆ
     for (int clusterIndex = 0; clusterIndex < clusterCount; clusterIndex++) {
-        // ƒNƒ‰ƒXƒ^(ƒ{[ƒ“)‚Ìæ‚èo‚µ
+        // ã‚¯ãƒ©ã‚¹ã‚¿(ãƒœãƒ¼ãƒ³)ã®å–ã‚Šå‡ºã—
         FbxCluster *cluster = skinDeformer->GetCluster(clusterIndex);
         FbxMatrix vertexTransformMatrix;
         FbxAMatrix referenceGlobalInitPosition;
@@ -53,7 +54,7 @@ void FBX_Model::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX& world, Dir
         clusterRelativeInitPosition = clusterGlobalInitPosition.Inverse() * referenceGlobalInitPosition;
         clusterRelativeCurrentPositionInverse = globalPosition.Inverse() * clusterGlobalCurrentPosition;
         vertexTransformMatrix = clusterRelativeCurrentPositionInverse * clusterRelativeInitPosition;
-        // ã‚Åì‚Á‚½s—ñ‚ÉŠe’¸“_–ˆ‚Ì‰e‹¿“x(d‚İ)‚ğŠ|‚¯‚Ä‚»‚ê‚¼‚ê‚É‰ÁZ
+        // ä¸Šã§ä½œã£ãŸè¡Œåˆ—ã«å„é ‚ç‚¹æ¯ã®å½±éŸ¿åº¦(é‡ã¿)ã‚’æ›ã‘ã¦ãã‚Œãã‚Œã«åŠ ç®—
         for (int i = 0; i < cluster->GetControlPointIndicesCount(); i++) {
             int index = cluster->GetControlPointIndices()[i];
             double weight = cluster->GetControlPointWeights()[i];
@@ -62,7 +63,7 @@ void FBX_Model::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX& world, Dir
         }
     }
 
-    // ÅI“I‚È’¸“_À•W‚ğŒvZ‚µVERTEX‚É•ÏŠ·
+    // æœ€çµ‚çš„ãªé ‚ç‚¹åº§æ¨™ã‚’è¨ˆç®—ã—VERTEXã«å¤‰æ›
     for (int i = 0; i < m_mesh->GetControlPointsCount(); i++) {
         FbxVector4 outVertex = clusterDeformation[i].MultNormalize(m_mesh->GetControlPointAt(i));
         vertices[i].Pos.x = (FLOAT)outVertex[0];
@@ -77,24 +78,24 @@ void FBX_Model::Draw(ID3D11DeviceContext* context, DirectX::XMMATRIX& world, Dir
     D3D11_MAPPED_SUBRESOURCE pdata;
     CONSTANT_BUFFER cb;
 
-    // ƒpƒ‰ƒ[ƒ^‚Ìó‚¯“n‚µ(’è”)
+    // ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å—ã‘æ¸¡ã—(å®šæ•°)
     cb.mWVP = DirectX::XMMatrixTranspose(world * view * proj);
     //context->Map(m_constantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
     //memcpy_s(pdata.pData, pdata.RowPitch, (void*)(&cb), sizeof(cb));
     //context->Unmap(m_constantBuffer, 0);
-    //context->VSSetConstantBuffers(0, 1, &m_constantBuffer); // ’¸“_ƒVƒF[ƒ_[‚Ì’è”ƒoƒbƒtƒ@w’è
-    //context->PSSetConstantBuffers(0, 1, &m_constantBuffer); // ƒsƒNƒZƒ‹ƒVƒF[ƒ_[‚Ì’è”ƒoƒbƒtƒ@w’è
+    //context->VSSetConstantBuffers(0, 1, &m_constantBuffer); // é ‚ç‚¹ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®å®šæ•°ãƒãƒƒãƒ•ã‚¡æŒ‡å®š
+    //context->PSSetConstantBuffers(0, 1, &m_constantBuffer); // ãƒ”ã‚¯ã‚»ãƒ«ã‚·ã‚§ãƒ¼ãƒ€ãƒ¼ã®å®šæ•°ãƒãƒƒãƒ•ã‚¡æŒ‡å®š
     graphics->UpdateWorldMatrixBuffer(world, cb.mWVP);
 
-    // ƒpƒ‰ƒ[ƒ^‚Ìó‚¯“n‚µ(’¸“_)
+    // ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å—ã‘æ¸¡ã—(é ‚ç‚¹)
     context->Map(VerBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &pdata);
     memcpy_s(pdata.pData, pdata.RowPitch, (void*)(vertices), sizeof(VERTEX) * m_mesh->GetControlPointsCount());
     context->Unmap(VerBuffer, 0);
-    context->IASetVertexBuffers(0, 1, &VerBuffer, &stride, &offset);     // ’¸“_î•ñ‚Ìw’è
+    context->IASetVertexBuffers(0, 1, &VerBuffer, &stride, &offset);     // é ‚ç‚¹æƒ…å ±ã®æŒ‡å®š
 
     //D3D11_PRIMITIVE_TOPOLOGY_POINTLIST
-    context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST); // ƒvƒŠƒ~ƒeƒBƒu‚Ìw’è
-    context->DrawIndexed(m_mesh->GetPolygonVertexCount(), 0, 0);         // •`‰æÀs
+    context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST); // ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–ã®æŒ‡å®š
+    context->DrawIndexed(m_mesh->GetPolygonVertexCount(), 0, 0);         // æç”»å®Ÿè¡Œ
 
 }
 
@@ -104,7 +105,7 @@ void FBX_Model::Create(
     ID3D11DeviceContext* context,
     ID3D11RenderTargetView* renderTargetView,
     const char* fbxfile_path) {
-    // <’è”ƒoƒbƒtƒ@‚Ìİ’è>
+    // <å®šæ•°ãƒãƒƒãƒ•ã‚¡ã®è¨­å®š>
     D3D11_BUFFER_DESC cb;
     cb.ByteWidth           = sizeof(CONSTANT_BUFFER);
     cb.Usage               = D3D11_USAGE_DYNAMIC;
@@ -114,11 +115,11 @@ void FBX_Model::Create(
     cb.StructureByteStride = 0;
     device->CreateBuffer(&cb, nullptr, &m_constantBuffer);
 
-    // <FBX“Ç‚İ‚İ>
+    // <FBXèª­ã¿è¾¼ã¿>
     FBX_Import(fbxfile_path);
-    // <’¸“_ƒf[ƒ^‚Ìæ‚èo‚µ>
+    // <é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—>
     //FBX_GetVertex();
-    // <’¸“_ƒf[ƒ^—pƒoƒbƒtƒ@‚Ìİ’è>
+    // <é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ç”¨ãƒãƒƒãƒ•ã‚¡ã®è¨­å®š>
     FBX_SetVertexData(device);
 }
 
@@ -136,7 +137,7 @@ void FBX_Model::Destroy() {
 }
 
 void FBX_Model::FBX_Import(const char* fbxfile_path) {
-    // <FBX“Ç‚İ‚İ>
+    // <FBXèª­ã¿è¾¼ã¿>
     m_fbxManager = FbxManager::Create();
     m_fbxScene = FbxScene::Create(m_fbxManager, "fbxscene");
     FbxString FileName(fbxfile_path);
@@ -167,7 +168,7 @@ void FBX_Model::FBX_Import(const char* fbxfile_path) {
 }
 
 void FBX_Model::FBX_GetVertex() {
-    // <’¸“_ƒf[ƒ^‚Ìæ‚èo‚µ>
+    // <é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—>
     for (int i = 0; i < m_fbxScene->GetRootNode()->GetChildCount(); i++) {
         if (m_fbxScene->GetRootNode()->GetChild(i)->GetNodeAttribute()->GetAttributeType() == FbxNodeAttribute::eMesh) {
             m_mesh = m_fbxScene->GetRootNode()->GetChild(i)->GetMesh();
@@ -195,7 +196,7 @@ void FBX_Model::FBX_SetVertexData(ID3D11Device* device) {
     }
     vertices = new VERTEX[m_mesh->GetControlPointsCount()];
 
-    // ƒCƒ“ƒfƒbƒNƒXƒf[ƒ^‚Ìæ‚èo‚µ‚Æƒoƒbƒtƒ@‚Ìİ’è
+    // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ‡ãƒ¼ã‚¿ã®å–ã‚Šå‡ºã—ã¨ãƒãƒƒãƒ•ã‚¡ã®è¨­å®š
     D3D11_BUFFER_DESC bd_index;
     bd_index.ByteWidth = sizeof(int) * m_mesh->GetPolygonVertexCount();
     bd_index.Usage = D3D11_USAGE_DEFAULT;

@@ -155,7 +155,8 @@ void ParticleMesh::Draw() {
     Emitter             *emitter  = m_parent->GetComponent<Emitter>();
 
     // シェーダ設定
-    graphics->UpdateShader(m_renderer->m_shaderName);
+    graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_VERTEX, m_renderer->m_shaderName);
+    graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_PIXEL,  m_renderer->m_shaderName);
     graphics->UpdateLayout(m_renderer->m_shaderName);
 
 	// 頂点、インデックスバッファをセット
@@ -166,7 +167,7 @@ void ParticleMesh::Draw() {
     context->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
     // Texture設定
-    graphics->SetTexture(DirectGraphics::TextureData(0,1, &m_texture));
+    graphics->SetTexture(DirectGraphics::ShaderType::TYPE_PIXEL, DirectGraphics::TextureData(0, 1, &m_texture));
 
     // ビュー変換
 	XMMATRIX mtxWorld = XMLoadFloat4x4(&m_transform->m_world);

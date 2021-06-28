@@ -116,7 +116,7 @@ void Shadow::Draw() {
     graphics->UpdateMaterial(material);
 
     // 描画設定
-    context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+    graphics->UpdatePrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
     graphics->SetZBuffer(false);
     graphics->SetCullMode((int)CullModes::FRONT);
 

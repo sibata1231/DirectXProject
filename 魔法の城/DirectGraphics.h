@@ -8,6 +8,8 @@
 #include "Singleton.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
+#include "HullShader.h"
+#include "DomainShader.h"
 #include "GraphicsUtility.h"
 #include "imgui.h"
 #include "Camera.h"
@@ -20,18 +22,21 @@ public:
     struct TextureData {
         int Register;
         int Num;
-        ID3D11ShaderResourceView** texture;
+        ID3D11ShaderResourceView** Texture;
         TextureData(int Register,int Num, ID3D11ShaderResourceView** texture) {
             this->Register = Register;
             this->Num      = Num;
-            this->texture  = texture;
+            this->Texture  = texture;
         }
     };
 
     enum class ShaderType {
-        VERTEX,
-        PIXEL,
+        TYPE_VERTEX,
+        TYPE_PIXEL,
+        TYPE_HULL,
+        TYPE_DOMAIN,
     };
+
 public:
     // 塗りつぶし背景
     ImVec4                    m_backgroundColor = ImVec4(1.0f, 0.5f, 0.5f, 1.0f);	// RenderTarget塗りつぶしカラー(RGBA)
@@ -77,7 +82,8 @@ public:
 	
 	void SetUpTransform();
 
-    void UpdateShader(std::string name);
+    void UpdatePrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitive);
+    void UpdateShader(ShaderType shaderType, std::string name);
     void UpdateRenderTarget(std::string rtvName, std::string dstName);
 
 	ID3D11Device* GetDevice() {
@@ -131,8 +137,7 @@ public:
             m_Context->OMSetBlendState(m_BlendState[nBlendState], blendFactor, 0xffffffff);
         }
     }
-    void SetSampler(std::string samplerName);
-    void SetTexture(TextureData texture, std::string samplerName = "Default");
+    void SetTexture(ShaderType shaderType, TextureData texture, std::string samplerName = "Default");
 
     // コンスタントバッファ
     void UpdateCamera();                                                             // 0
@@ -203,7 +208,7 @@ private:
 	 * 今回のプロジェクトで使用するシェーダを作成する@n
 	 * @return 作成の成否 成功(true)
 	 */
-    bool CreateShader(std::string shaderName, std::string layoutName, int shaderIndex);
+    bool CreateShader(ShaderType ShaderType, std::string shaderName, std::string layoutName, int shaderIndex);
 
 	/**
 	 * @brief ViewPort設定関数@n
@@ -250,6 +255,8 @@ private:
     // Shader
     std::map<std::string, VertexShader *>      m_VertexShader;	     //!< @brief VertexShader保持用
     std::map<std::string, PixelShader *>       m_PixelShader;	     //!< @brief PixelShader保持用
+    std::map<std::string, HullShader *>        m_HullShader;	     //!< @brief HullShader保持用
+    std::map<std::string, DomainShader *>      m_DomainShader;	     //!< @brief DomainShader保持用
     std::map<std::string, ConstantBuffer *>    m_ConstantBufferData; //!< @brief ConstcantBuffer保持用
     std::map<std::string, ID3D11Buffer* >      m_ConstantBuffer;     //!< @brief 定数バッファ保持用
     std::map<std::string, ID3D11InputLayout* > m_InputLayout;	     //!< @brief 入力レイアウト保持用
@@ -258,27 +265,6 @@ private:
     ID3D11RasterizerState*   m_RasterizerState[(int)CullModes::MAX]; //!< @brief RasterizerState保持用
     ID3D11DepthStencilState* m_DepthStencilState[2];                 //!< @brief DepthStencilState保持用
     ID3D11BlendState*		 m_BlendState[(int)BlendStates::MAX];    //!< @brief BlendState
-private:
-    const D3D11_INPUT_ELEMENT_DESC INPUT_ELEMENT_PNCT[4] = {
-        { "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR",		0, DXGI_FORMAT_R32G32B32A32_FLOAT,  0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXTURE",	0, DXGI_FORMAT_R32G32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
-    const D3D11_INPUT_ELEMENT_DESC INPUT_ELEMENT_PCT[3] = {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0},
-        { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        { "TEXTURE",  0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-    };
-    const D3D11_INPUT_ELEMENT_DESC INPUT_ELEMENT_P[1] = {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
-    const D3D11_INPUT_ELEMENT_DESC INPUT_ELEMENT_PNTT[4] = {
-        { "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXTURE",	0, DXGI_FORMAT_R32G32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TANGENT",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
 };
 
 #endif

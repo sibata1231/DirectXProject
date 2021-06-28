@@ -11,7 +11,7 @@ Font::~Font() {
 }
 
 void Font::Start() {
-    static const LPCWSTR fontChar = L"驫";
+    static const LPCWSTR fontChar = L"T";
 
     // フォントハンドルの設定
     UINT fontSize = 64;
@@ -128,10 +128,7 @@ void Font::Start() {
     transform->m_position.x = -450.0f + 128.0f;
     transform->m_position.y = 224.0f;
     transform->m_scale.x    = 128.0f;
-    transform->m_scale.y    = 128.0f;
-    
-    //transform->m_uv        = XMFLOAT2(1.0f / iOfs_x, 1.0f / iOfs_y);
-    //transform->m_frameSize = XMFLOAT2(1.0f / iBmp_w, 1.0f / iBmp_h);
+    transform->m_scale.y    = 128.0f;    
 }
 
 void Font::Update() {

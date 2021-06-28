@@ -80,14 +80,15 @@ void PolygonManager::Draw() {
 	SetVertexPolygon();
 
     DirectGraphics *graphics = &DirectGraphics::GetInstance();
-    graphics->UpdateShader("UI");
+    graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_VERTEX, "UI");
+    graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_PIXEL , "UI");
     graphics->UpdateLayout("UI");
 
 	UINT stride = sizeof(UI_VERTEX);
 	UINT offset = 0;
 	m_deviceContext->IASetVertexBuffers(0, 1, &m_vertexBuffer, &stride, &offset);
     graphics->SetBlendState((int)BlendStates::ALPHABLEND);
-    graphics->SetTexture(DirectGraphics::TextureData(0, 1, &m_texture));
+    graphics->SetTexture(DirectGraphics::ShaderType::TYPE_PIXEL, DirectGraphics::TextureData(0, 1, &m_texture));
     graphics->UpdateViewProjection(XMLoadFloat4x4(&m_view), XMLoadFloat4x4(&m_proj));
     graphics->UpdateTexture(XMLoadFloat4x4(&m_tex));
     graphics->UpdateWorldMatrixBuffer(XMLoadFloat4x4(&m_world), XMLoadFloat4x4(&m_world));

@@ -29,7 +29,7 @@ enum class ShaderModes {
     DEPTH_SHADOW,
 };
 
-static std::string vertexShaderPass[] = {
+static const std::string vertexShaderPass[] = {
     "Resources/Shader/VertexShader.cso",
     "Resources/Shader/FogVertexShader.cso",
     "Resources/Shader/RimLightVertexShader.cso",
@@ -44,7 +44,7 @@ static std::string vertexShaderPass[] = {
     "Resources/Shader/DepthShadowVertexShader.cso",
 };
 
-static std::string pixelShaderPass[] = {
+static const std::string pixelShaderPass[] = {
     "Resources/Shader/PixelShader.cso",
     "Resources/Shader/FogPixelShader.cso",
     "Resources/Shader/RimLightPixelShader.cso",
@@ -57,6 +57,32 @@ static std::string pixelShaderPass[] = {
     "Resources/Shader/BumpPS.cso",
     "Resources/Shader/DepthWritePixelShader.cso",
     "Resources/Shader/DepthShadowPixelShader.cso",
+};
+static const std::string hullShaderPass[]   = {""};
+static const std::string domainShaderPass[] = {""};
+
+static const D3D11_INPUT_ELEMENT_DESC INPUT_ELEMENT_PNCT[4] = {
+    { "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "COLOR",		0, DXGI_FORMAT_R32G32B32A32_FLOAT,  0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TEXTURE",	0, DXGI_FORMAT_R32G32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+};
+
+static const D3D11_INPUT_ELEMENT_DESC INPUT_ELEMENT_PCT[3] = {
+    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 0,                            D3D11_INPUT_PER_VERTEX_DATA, 0},
+    { "COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+    { "TEXTURE",  0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+};
+
+static const D3D11_INPUT_ELEMENT_DESC INPUT_ELEMENT_P[1] = {
+    { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+};
+
+static const D3D11_INPUT_ELEMENT_DESC INPUT_ELEMENT_PNTT[4] = {
+    { "POSITION",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "NORMAL",		0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TEXTURE",	0, DXGI_FORMAT_R32G32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TANGENT",	0, DXGI_FORMAT_R32G32B32_FLOAT,		0,	D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 };
 
 bool DirectGraphics::Init() {
@@ -103,20 +129,33 @@ bool DirectGraphics::Init() {
     if (CreateConstantBuffer("Material", 3, new MaterialBuffer, sizeof(MaterialBuffer)) == false) { return false; }
     if (CreateConstantBuffer("Texture",  4, new TextureBuffer,  sizeof(TextureBuffer))  == false) { return false; }
 
-	// シェーダ作成
-    if (CreateShader("NormalModel",    "PNCT", (int)ShaderModes::NORMAL)          == false) { return false; }
-    if (CreateShader("Fog",            "PNCT", (int)ShaderModes::FOG)             == false) { return false; }
-    if (CreateShader("RimLight",       "PNCT", (int)ShaderModes::RIM_LIGHT)       == false) { return false; }
-    if (CreateShader("Particle",       "PNCT", (int)ShaderModes::PARTICLE)        == false) { return false; }
-    if (CreateShader("AnimationModel", "P",    (int)ShaderModes::ANIMATION_MODEL) == false) { return false; }
-    if (CreateShader("UI",             "PCT",  (int)ShaderModes::UI)              == false) { return false; }
-    if (CreateShader("Bokeh",          "PNCT", (int)ShaderModes::BOKEH)           == false) { return false; }
-    if (CreateShader("POM",            "PNTT", (int)ShaderModes::POM)             == false) { return false; }
-    if (CreateShader("WallPom",        "PNTT", (int)ShaderModes::WALL_POM)        == false) { return false; }
-    if (CreateShader("Bump",           "PNTT", (int)ShaderModes::BUMP)            == false) { return false; }
-    if (CreateShader("DepthWrite",     "PNCT", (int)ShaderModes::DEPTH_WRITE)     == false) { return false; }
-    if (CreateShader("DepthShadow",    "PNCT", (int)ShaderModes::DEPTH_SHADOW)    == false) { return false; }
+	// Vertexシェーダ作成
+    if (CreateShader(ShaderType::TYPE_VERTEX,"NormalModel",    "PNCT", (int)ShaderModes::NORMAL)          == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"Fog",            "PNCT", (int)ShaderModes::FOG)             == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"RimLight",       "PNCT", (int)ShaderModes::RIM_LIGHT)       == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"Particle",       "PNCT", (int)ShaderModes::PARTICLE)        == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"AnimationModel", "P",    (int)ShaderModes::ANIMATION_MODEL) == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"UI",             "PCT",  (int)ShaderModes::UI)              == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"Bokeh",          "PNCT", (int)ShaderModes::BOKEH)           == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"POM",            "PNTT", (int)ShaderModes::POM)             == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"WallPom",        "PNTT", (int)ShaderModes::WALL_POM)        == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"Bump",           "PNTT", (int)ShaderModes::BUMP)            == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"DepthWrite",     "PNCT", (int)ShaderModes::DEPTH_WRITE)     == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_VERTEX,"DepthShadow",    "PNCT", (int)ShaderModes::DEPTH_SHADOW)    == false) { return false; }
 
+    // Pixel
+    if (CreateShader(ShaderType::TYPE_PIXEL,"NormalModel",    "PNCT", (int)ShaderModes::NORMAL)          == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"Fog",            "PNCT", (int)ShaderModes::FOG)             == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"RimLight",       "PNCT", (int)ShaderModes::RIM_LIGHT)       == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"Particle",       "PNCT", (int)ShaderModes::PARTICLE)        == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"AnimationModel", "P",    (int)ShaderModes::ANIMATION_MODEL) == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"UI",             "PCT",  (int)ShaderModes::UI)              == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"Bokeh",          "PNCT", (int)ShaderModes::BOKEH)           == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"POM",            "PNTT", (int)ShaderModes::POM)             == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"WallPom",        "PNTT", (int)ShaderModes::WALL_POM)        == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"Bump",           "PNTT", (int)ShaderModes::BUMP)            == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"DepthWrite",     "PNCT", (int)ShaderModes::DEPTH_WRITE)     == false) { return false; }
+    if (CreateShader(ShaderType::TYPE_PIXEL,"DepthShadow",    "PNCT", (int)ShaderModes::DEPTH_SHADOW)    == false) { return false; }
     // ViewPort設定
     UpdateViewPort(width, height);
 
@@ -242,25 +281,38 @@ void DirectGraphics::FinishRendering() {
 			0 );	// 出力オプション
 }
 
-// Samplerの設定
-void DirectGraphics::SetSampler(std::string samplerName) {
-    m_Context->PSSetSamplers(0, 1, &m_SamplerState[samplerName]);
-}
-
 // Textureの設定
-void DirectGraphics::SetTexture(TextureData texture, std::string samplerName) {
-    SetSampler(samplerName);
+void DirectGraphics::SetTexture(ShaderType shaderType,TextureData data, std::string samplerName) {
     if (!m_baseTexture) {
         CreateTextureFromFile(m_Device, BASE_TEXTURE_NAME, &m_baseTexture);
     }
     // PixelShaderで使用するテクスチャの設定
-    if (texture.texture) {
-        m_Context->PSSetShaderResources(texture.Register, texture.Num, texture.texture);
-    } else {
-        m_Context->PSSetShaderResources(texture.Register, texture.Num, &m_baseTexture);
+    if (!data.Texture) {
+        data.Texture = &m_baseTexture;
+    }
+
+    switch (shaderType)
+    {
+    case DirectGraphics::ShaderType::TYPE_VERTEX:
+        m_Context->VSSetSamplers(0, 1, &m_SamplerState[samplerName]);
+        m_Context->VSSetShaderResources(data.Register, data.Num, data.Texture);
+        break;
+    case DirectGraphics::ShaderType::TYPE_PIXEL:
+        m_Context->PSSetSamplers(0, 1, &m_SamplerState[samplerName]);
+        m_Context->PSSetShaderResources(data.Register, data.Num, data.Texture);
+        break;
+    case DirectGraphics::ShaderType::TYPE_HULL:
+        m_Context->HSSetSamplers(0, 1, &m_SamplerState[samplerName]);
+        m_Context->HSSetShaderResources(data.Register, data.Num, data.Texture);
+        break;
+    case DirectGraphics::ShaderType::TYPE_DOMAIN:
+        m_Context->DSSetSamplers(0, 1, &m_SamplerState[samplerName]);
+        m_Context->DSSetShaderResources(data.Register, data.Num, data.Texture);
+        break;
+    default:
+        break;
     }
 }
-
 void DirectGraphics::SetUpTransform() {
 	HWND window_handle = FindWindow(Window::ClassName, nullptr);
 	RECT rect;
@@ -285,8 +337,8 @@ void DirectGraphics::UpdateCamera() {
     XMStoreFloat4(&cameraBuffer->m_cameraPos,    MainCamera::GetInstance().GetLook());
     XMStoreFloat4(&cameraBuffer->m_cameraVector, MainCamera::GetInstance().GetEye());
     m_Context->UpdateSubresource(m_ConstantBuffer["Camera"], 0, nullptr, cameraBuffer, 0, 0);
-    UpdateShaderConstantBuffers(ShaderType::PIXEL,  0, "Camera");
-    UpdateShaderConstantBuffers(ShaderType::VERTEX, 0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_PIXEL,  0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_VERTEX, 0, "Camera");
 }
 
 void DirectGraphics::UpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMATRIX projection) {
@@ -297,8 +349,8 @@ void DirectGraphics::UpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMAT
     XMStoreFloat4(&cameraBuffer->m_cameraPos, MainCamera::GetInstance().GetLook());
     XMStoreFloat4(&cameraBuffer->m_cameraVector, MainCamera::GetInstance().GetEye());
     m_Context->UpdateSubresource(m_ConstantBuffer["Camera"], 0, nullptr, cameraBuffer, 0, 0);
-    UpdateShaderConstantBuffers(ShaderType::PIXEL,  0, "Camera");
-    UpdateShaderConstantBuffers(ShaderType::VERTEX, 0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_PIXEL,  0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_VERTEX, 0, "Camera");
 }
 
 void DirectGraphics::UpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMATRIX projection, XMVECTOR pos, XMVECTOR direction) {
@@ -309,8 +361,8 @@ void DirectGraphics::UpdateViewProjection(DirectX::XMMATRIX view, DirectX::XMMAT
     XMStoreFloat4(&cameraBuffer->m_cameraPos, pos);
     XMStoreFloat4(&cameraBuffer->m_cameraVector, direction);
     m_Context->UpdateSubresource(m_ConstantBuffer["Camera"], 0, nullptr, cameraBuffer, 0, 0);
-    UpdateShaderConstantBuffers(ShaderType::PIXEL,  0, "Camera");
-    UpdateShaderConstantBuffers(ShaderType::VERTEX, 0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_PIXEL,  0, "Camera");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_VERTEX, 0, "Camera");
 }
 
 // ライトのカラー設定
@@ -324,8 +376,8 @@ void DirectGraphics::UpdateLight() {
     lightBuffer->m_specular = *(DirectX::XMFLOAT4 *)&Light::GetInstance().m_specular;
     XMStoreFloat4x4(&lightBuffer->m_matrix, XMMatrixIdentity());
     m_Context->UpdateSubresource(m_ConstantBuffer["Light"], 0, nullptr, lightBuffer, 0, 0);
-    UpdateShaderConstantBuffers(ShaderType::PIXEL,  1, "Light");
-    UpdateShaderConstantBuffers(ShaderType::VERTEX, 1, "Light");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_PIXEL,  1, "Light");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_VERTEX, 1, "Light");
 }
 
 // ライトのカラー設定
@@ -339,8 +391,8 @@ void DirectGraphics::UpdateLight(DirectX::XMMATRIX matrix) {
     lightBuffer->m_specular = *(DirectX::XMFLOAT4 *)&Light::GetInstance().m_specular;
     XMStoreFloat4x4(&lightBuffer->m_matrix, matrix);
     m_Context->UpdateSubresource(m_ConstantBuffer["Light"], 0, nullptr, lightBuffer, 0, 0);
-    UpdateShaderConstantBuffers(ShaderType::PIXEL, 1, "Light");
-    UpdateShaderConstantBuffers(ShaderType::VERTEX, 1, "Light");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_PIXEL, 1, "Light");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_VERTEX, 1, "Light");
 }
 
 // ワールドマトリックス設定
@@ -350,8 +402,8 @@ void DirectGraphics::UpdateWorldMatrixBuffer(DirectX::XMMATRIX matrix,DirectX::X
     XMStoreFloat4x4(&worldBuffer->m_wvp,   XMMatrixTranspose(WVP));
     XMStoreFloat4x4(&worldBuffer->m_world, XMMatrixTranspose(matrix));
     m_Context->UpdateSubresource(m_ConstantBuffer["World"], 0, nullptr, worldBuffer, 0, 0);
-    UpdateShaderConstantBuffers(ShaderType::PIXEL,  2, "World");
-    UpdateShaderConstantBuffers(ShaderType::VERTEX, 2, "World");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_PIXEL,  2, "World");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_VERTEX, 2, "World");
 }
 
 // マテリアル設定
@@ -363,8 +415,8 @@ void DirectGraphics::UpdateMaterial(ObjMaterial material) {
     materialBuffer->m_ambient  = DirectX::XMFLOAT4(material.Ambient[0],  material.Ambient[1],  material.Ambient[2],  material.Ambient[3]);
     materialBuffer->m_emissive = DirectX::XMFLOAT4(material.Emissive[0], material.Emissive[1], material.Emissive[2], material.Emissive[3]);
     m_Context->UpdateSubresource(m_ConstantBuffer["Material"], 0, nullptr, materialBuffer, 0, 0);
-    UpdateShaderConstantBuffers(ShaderType::PIXEL,  3, "Material");
-    UpdateShaderConstantBuffers(ShaderType::VERTEX, 3, "Material");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_PIXEL,  3, "Material");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_VERTEX, 3, "Material");
 }
 
 // テクスチャ設定
@@ -372,46 +424,62 @@ void DirectGraphics::UpdateTexture(DirectX::XMMATRIX textureMatrix) {
     TextureBuffer* textureBuffer = (TextureBuffer* )m_ConstantBufferData["Texture"]->m_buffer;
     XMStoreFloat4x4(&textureBuffer->m_tex, XMMatrixTranspose(textureMatrix));
     m_Context->UpdateSubresource(m_ConstantBuffer["Texture"], 0, nullptr, textureBuffer, 0, 0);
-    UpdateShaderConstantBuffers(ShaderType::PIXEL,  4, "Texture");
-    UpdateShaderConstantBuffers(ShaderType::VERTEX, 4, "Texture");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_PIXEL,  4, "Texture");
+    UpdateShaderConstantBuffers(ShaderType::TYPE_VERTEX, 4, "Texture");
 }
 
 // その他定数バッファ更新
 void DirectGraphics::UpdateConstantBuffers(int registerNum,std::string bufferName,void* buffer) {
     m_Context->UpdateSubresource(m_ConstantBuffer[bufferName], 0, nullptr, buffer, 0, 0);
-    UpdateShaderConstantBuffers(ShaderType::PIXEL,  registerNum, bufferName);
-    UpdateShaderConstantBuffers(ShaderType::VERTEX, registerNum, bufferName);
+    UpdateShaderConstantBuffers(ShaderType::TYPE_PIXEL,  registerNum, bufferName);
+    UpdateShaderConstantBuffers(ShaderType::TYPE_VERTEX, registerNum, bufferName);
 }
 
 void DirectGraphics::UpdateShaderConstantBuffers(ShaderType shaderType,int registerIndex,std::string bufferName) {
     switch (shaderType) {
-        case ShaderType::PIXEL:
+        case ShaderType::TYPE_PIXEL:
             m_Context->PSSetConstantBuffers(registerIndex, 1, &m_ConstantBuffer[bufferName]);
             break;
-        case ShaderType::VERTEX:
+        case ShaderType::TYPE_VERTEX:
             m_Context->VSSetConstantBuffers(registerIndex, 1, &m_ConstantBuffer[bufferName]);
+            break;
+        case ShaderType::TYPE_DOMAIN:
+            m_Context->DSSetConstantBuffers(registerIndex, 1, &m_ConstantBuffer[bufferName]);
+            break;
+        case ShaderType::TYPE_HULL:
+            m_Context->HSSetConstantBuffers(registerIndex, 1, &m_ConstantBuffer[bufferName]);
             break;
     }
 }
 
+// プリミティブ形状
+void DirectGraphics::UpdatePrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY primitive = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST) {
+    m_Context->IASetPrimitiveTopology(primitive);	// プリミティブの形状を指定
+    //D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST
+}
+
 // シェーダー名
-void DirectGraphics::UpdateShader(std::string name) {
-	m_Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	// プリミティブの形状を指定
-	// VerteXShader、PixelShaderを設定
-	m_Context->VSSetShader(
-		m_VertexShader[name]->GetShaderInterface(),	// 使用するVertexShder
-		/*
-			ClassInstanceのポインタを設定する
-				これはShader作成時のID3D11ClassLinkageを使用した場合に
-				用いる項目なので今回はnullptrを指定する
-		*/
-		nullptr,
-		0);									// ClassInstanceの数
-	m_Context->PSSetShader(m_PixelShader[name]->GetShaderInterface(), nullptr, 0);
+void DirectGraphics::UpdateShader(ShaderType shaderType, std::string name) {
+    switch (shaderType) {
+        case DirectGraphics::ShaderType::TYPE_VERTEX:
+            m_Context->VSSetShader(m_VertexShader[name]->GetShaderInterface(), nullptr, 0);
+            UpdatePrimitiveTopology();
+            break;
+        case DirectGraphics::ShaderType::TYPE_PIXEL:
+            m_Context->PSSetShader(m_PixelShader[name]->GetShaderInterface(), nullptr, 0);
+            break;
+        case DirectGraphics::ShaderType::TYPE_HULL:
+            m_Context->HSSetShader(m_HullShader[name]->GetShaderInterface(), nullptr, 0);
+            break;
+        case DirectGraphics::ShaderType::TYPE_DOMAIN:
+            m_Context->DSSetShader(m_DomainShader[name]->GetShaderInterface(), nullptr, 0);
+            break;
+        default:
+            break;
+    }
 }
 
 void DirectGraphics::UpdateRenderTarget(std::string rtvName,std::string dstName) {
-    // (OutputManger)RenderTagetの指定
     m_Context->OMSetRenderTargets(
         1,							  // 使用するViewの数
         &m_RenderTargetView[rtvName], // 使用するRenderTargetView
@@ -706,16 +774,39 @@ bool DirectGraphics::CreateInputLayout(std::string layoutName,std::string shader
     return true;
 }
 
-bool DirectGraphics::CreateShader(std::string shaderName,std::string layoutName,int shaderIndex) {
-	m_VertexShader[shaderName] = new VertexShader();
-	if (!m_VertexShader[shaderName]->Create(m_Device, vertexShaderPass[shaderIndex].c_str())) {
-		return false;
-	}
-    CreateInputLayout(layoutName, shaderName,m_VertexShader[shaderName]);
-	m_PixelShader[shaderName] = new PixelShader();
-	if (!m_PixelShader[shaderName]->Create(m_Device, pixelShaderPass[shaderIndex].c_str())) {
-		return false;
-	}
+bool DirectGraphics::CreateShader(ShaderType shaderType,std::string shaderName,std::string layoutName,int shaderIndex) {
+    switch (shaderType)
+    {
+    case DirectGraphics::ShaderType::TYPE_VERTEX:
+        m_VertexShader[shaderName] = new VertexShader();
+        if (!m_VertexShader[shaderName]->Create(m_Device, vertexShaderPass[shaderIndex].c_str())) {
+            return false;
+        }
+        CreateInputLayout(layoutName, shaderName, m_VertexShader[shaderName]);
+        break;
+    case DirectGraphics::ShaderType::TYPE_PIXEL:
+        m_PixelShader[shaderName] = new PixelShader();
+        if (!m_PixelShader[shaderName]->Create(m_Device, pixelShaderPass[shaderIndex].c_str())) {
+            return false;
+        }
+        break;
+    case DirectGraphics::ShaderType::TYPE_HULL:
+        m_HullShader[shaderName] = new HullShader();
+        if (!m_HullShader[shaderName]->Create(m_Device, hullShaderPass[shaderIndex].c_str())) {
+            return false;
+        }
+        break;
+    case DirectGraphics::ShaderType::TYPE_DOMAIN:
+        m_DomainShader[shaderName] = new DomainShader();
+        if (!m_DomainShader[shaderName]->Create(m_Device, domainShaderPass[shaderIndex].c_str())) {
+            return false;
+        }
+        break;
+    default:
+        break;
+    }
+
+
 	return true;
 }
 

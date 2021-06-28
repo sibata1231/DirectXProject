@@ -211,7 +211,8 @@ void ObjectManager::ShadowRenderer() {
         if (tag != RendererTags::MODEL || object->GetComponent<ModelRenderer>()->m_shadowType == ShadowTypes::NONE) {
             continue;
         }
-        DirectGraphics::GetInstance().UpdateShader("DepthWrite");
+        DirectGraphics::GetInstance().UpdateShader(DirectGraphics::ShaderType::TYPE_VERTEX, "DepthWrite");
+        DirectGraphics::GetInstance().UpdateShader(DirectGraphics::ShaderType::TYPE_PIXEL , "DepthWrite");
         DirectGraphics::GetInstance().UpdateLayout("DepthWrite");
         object->Draw();
     }
@@ -223,9 +224,10 @@ void ObjectManager::ShadowRenderer() {
     ID3D11ShaderResourceView* texture[] = {
         graphics->GetRenderTargetTexture("DepthWrite"),
     };
-    graphics->SetTexture(DirectGraphics::TextureData(0, 1, nullptr),"DepthShadow");
-    graphics->SetTexture(DirectGraphics::TextureData(1, 1, texture),"DepthShadow");
-    graphics->UpdateShader("DepthShadow");
+    graphics->SetTexture(DirectGraphics::ShaderType::TYPE_PIXEL,DirectGraphics::TextureData(0, 1, nullptr),"DepthShadow");
+    graphics->SetTexture(DirectGraphics::ShaderType::TYPE_PIXEL,DirectGraphics::TextureData(1, 1, texture),"DepthShadow");
+    graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_VERTEX,"DepthShadow");
+    graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_PIXEL , "DepthShadow");
     graphics->UpdateLayout("DepthShadow");
     graphics->UpdateLight(DirectX::XMMatrixTranspose(lightView * lightProj * lightScreen));
     m_shadow->Draw();
@@ -242,7 +244,8 @@ void ObjectManager::ObjectRenderer() {
         }
         if (tag == RendererTags::MODEL || tag == RendererTags::BACKGROUND || tag == RendererTags::MESH) {
             std::string shaderName = object->GetComponent<Renderer>()->m_shaderName;
-            graphics->UpdateShader(shaderName);
+            graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_VERTEX,shaderName);
+            graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_PIXEL, shaderName);
             graphics->UpdateLayout(shaderName);
         }
         object->Draw();
