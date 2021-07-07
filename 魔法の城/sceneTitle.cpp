@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "Polygon.h"
 #include "Font.h"
+#include "Tessellation.h"
 
 SceneTitle::SceneTitle() : Scene::Scene(&SceneManager::GetInstance()) {}
 
@@ -23,32 +24,42 @@ void SceneTitle::Init() {
     }*/
 
     // フォント画像
-    {
-        Object* object = new Object(nullptr);
-        object->m_transform->m_name = "FontTest";
-        object->AddComponent<Font>();
-        m_objectManager.Add(object);
-    }
+    //{
+    //    Object* object = new Object(nullptr);
+    //    object->m_transform->m_name = "FontTest";
+    //    object->AddComponent<Font>();
+    //    m_objectManager.Add(object);
+    //}
 
-    // DepthWrite画像
-    {
-        Object* object = new Object(nullptr);
-        object->m_transform->m_name = "DepthWriteImage";
-        Texture* texture = object->AddComponent<Texture>();
-        texture->Load(DirectGraphics::GetInstance().GetRenderTargetTexture("DepthWrite"));
-        RectTransform *transform = object->GetComponent<RectTransform>();
-        transform->m_position.x = -450.0f;
-        transform->m_position.y = 224.0f;
-        transform->m_scale.x = 128.0f;
-        transform->m_scale.y = 128.0f;
-        m_objectManager.Add(object);
-    
-    }
+    // 確認用画像
+    //{
+    //    Object* object = new Object(nullptr);
+    //    //object->m_transform->m_name = "DepthWriteImage";
+    //    object->m_transform->m_name = "sphereAlbedoImage";
+    //    Texture* texture = object->AddComponent<Texture>();
+    //    //texture->Load(DirectGraphics::GetInstance().GetRenderTargetTexture("DepthWrite"));
+    //    texture->Load(DirectGraphics::GetInstance().GetSampleTexture("skyTexture"));
+    //    RectTransform *transform = object->GetComponent<RectTransform>();
+    //    transform->m_position.x = -450.0f;
+    //    transform->m_position.y = 224.0f;
+    //    transform->m_scale.x = 128.0f;
+    //    transform->m_scale.y = 128.0f;
+    //    m_objectManager.Add(object);
+    //}
     // プレイヤーの生成
     {
         Object* object = new Object(nullptr);
         object->AddComponent<Player>();
         object->m_transform->m_name = "Player";
+        m_objectManager.Add(object);
+    }
+    // 地形作成
+    {
+        Object* object = new Object(nullptr);
+        object->m_transform->m_name = "Tessellation";
+        Tessellation* terrain = object->AddComponent<Tessellation>();
+        //terrain->Create("Resources/texture/cloud.jpg");
+        terrain->Create("Resources/obj_Models/quad.obj", DirectGraphics::GetInstance().GetDevice());
         m_objectManager.Add(object);
     }
 }

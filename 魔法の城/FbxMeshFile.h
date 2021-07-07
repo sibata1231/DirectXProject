@@ -1,4 +1,4 @@
-#ifndef FBX_MESH_FILE_H_
+ï»¿#ifndef FBX_MESH_FILE_H_
 #define FBX_MESH_FILE_H_
 
 #include <fbxsdk.h>
@@ -50,30 +50,29 @@ public:
 	}
 
 	/**
-	* @brief ƒ‚ƒfƒ‹“Ç‚İ‚İ@n
-	* ƒ‚ƒfƒ‹ƒf[ƒ^‚ğ“Ç‚İ‚Ş
-	* @return ì¬‚Ì¬”Û ¬Œ÷(true)
-	* @param[in] device ƒfƒoƒCƒX
-	* @param[in] vertex_shader ƒ‚ƒfƒ‹‚ÆŠÖ˜A•t‚¯‚éVertexShader
+	* @brief ãƒ¢ãƒ‡ãƒ«èª­ã¿è¾¼ã¿@n
+	* ãƒ¢ãƒ‡ãƒ«ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
+	* @return ä½œæˆã®æˆå¦ æˆåŠŸ(true)
+	* @param[in] device ãƒ‡ãƒã‚¤ã‚¹
 	*/
-	bool Load(const char* file_name, ID3D11Device *device, VertexShader* vertex_shader);
+	bool Load(const char* file_name, ID3D11Device *device);
 
     /**
-     * @brief ƒ‚ƒfƒ‹•`‰æŠÖ”@n
-     * w’è‚³‚ê‚½î•ñ‚Åƒ‚ƒfƒ‹‚ğ•`‰æ‚·‚é
-     * @return ì¬‚Ì¬”Û ¬Œ÷(true)
-     * @param[in] graphics •`‰æŠÇ—ƒNƒ‰ƒX
-     * @param[in] pos •`‰æÀ•W
-     * @param[in] scale Šgk—¦
-     * @param[in] degree Šp“x
+     * @brief ãƒ¢ãƒ‡ãƒ«æç”»é–¢æ•°@n
+     * æŒ‡å®šã•ã‚ŒãŸæƒ…å ±ã§ãƒ¢ãƒ‡ãƒ«ã‚’æç”»ã™ã‚‹
+     * @return ä½œæˆã®æˆå¦ æˆåŠŸ(true)
+     * @param[in] graphics æç”»ç®¡ç†ã‚¯ãƒ©ã‚¹
+     * @param[in] pos æç”»åº§æ¨™
+     * @param[in] scale æ‹¡ç¸®ç‡
+     * @param[in] degree è§’åº¦
      */
     void Render(DirectGraphics* graphics, Vector3 pos, Vector3 scale, Vector3 degree);
 
 private:
 	struct MeshData
 	{
-		ID3D11Buffer* m_VertexBuffer;			//!< @brief ’¸“_ƒoƒbƒtƒ@(Shader‘—M—p)
-		ID3D11Buffer* m_IndexBuffer;			//!< @brief ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@(Shader‘—M—p)
+		ID3D11Buffer* m_VertexBuffer;			//!< @brief é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡(Shaderé€ä¿¡ç”¨)
+		ID3D11Buffer* m_IndexBuffer;			//!< @brief ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡(Shaderé€ä¿¡ç”¨)
 		std::vector<CustomVertex> m_Vertices;
 		std::vector<UINT> m_Indices;
 		std::string m_MaterialName;
@@ -82,71 +81,71 @@ private:
 
 private:
 	/**
-	* @brief ƒƒbƒVƒ…¶¬@n
-	* ƒtƒ@ƒCƒ‹‚©‚çƒƒbƒVƒ…‚ğ¶¬‚·‚é
-	* @return ì¬‚Ì¬”Û ¬Œ÷(true)
-	* @param[in] file_name ƒtƒ@ƒCƒ‹–¼
+	* @brief ãƒ¡ãƒƒã‚·ãƒ¥ç”Ÿæˆ@n
+	* ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰ãƒ¡ãƒƒã‚·ãƒ¥ã‚’ç”Ÿæˆã™ã‚‹
+	* @return ä½œæˆã®æˆå¦ æˆåŠŸ(true)
+	* @param[in] file_name ãƒ•ã‚¡ã‚¤ãƒ«å
 	*/
 	bool LoadFbxFile(std::vector<std::string>& out_material_list, const char* file_path, const char* file_name);
 
 	/**
-	* @brief VertexBufferì¬@n
-	* VertexBuffer‚ğì¬‚·‚é
-	* @return ì¬‚Ì¬”Û ¬Œ÷(true)
-	* @param[in] device DirectX11ƒOƒ‰ƒtƒBƒNƒXƒfƒoƒCƒX
+	* @brief VertexBufferä½œæˆ@n
+	* VertexBufferã‚’ä½œæˆã™ã‚‹
+	* @return ä½œæˆã®æˆå¦ æˆåŠŸ(true)
+	* @param[in] device DirectX11ã‚°ãƒ©ãƒ•ã‚£ã‚¯ã‚¹ãƒ‡ãƒã‚¤ã‚¹
 	*/
 	bool CreateVertexBuffer(ID3D11Device* device);
 
 	/**
-	* @brief IndexBufferì¬@n
-	* IndexBuffer‚ğì¬‚·‚é
-	* @return ì¬‚Ì¬”Û ¬Œ÷(true)
-	* @param[in] device DirectX11ƒOƒ‰ƒtƒBƒNƒXƒfƒoƒCƒX
+	* @brief IndexBufferä½œæˆ@n
+	* IndexBufferã‚’ä½œæˆã™ã‚‹
+	* @return ä½œæˆã®æˆå¦ æˆåŠŸ(true)
+	* @param[in] device DirectX11ã‚°ãƒ©ãƒ•ã‚£ã‚¯ã‚¹ãƒ‡ãƒã‚¤ã‚¹
 	*/
 	bool CreateIndexBuffer(ID3D11Device* device);
 
 	/**
-	* @brief ƒƒbƒVƒ…ƒf[ƒ^‚ğì¬‚·‚é
-	* @param[in] node_name ƒm[ƒh‚Ì–¼‘O
-	* @param[in] mesh Mesh‚ğì‚é‚½‚ß‚ÌNode‚ÌMeshƒf[ƒ^
+	* @brief ãƒ¡ãƒƒã‚·ãƒ¥ãƒ‡ãƒ¼ã‚¿ã‚’ä½œæˆã™ã‚‹
+	* @param[in] node_name ãƒãƒ¼ãƒ‰ã®åå‰
+	* @param[in] mesh Meshã‚’ä½œã‚‹ãŸã‚ã®Nodeã®Meshãƒ‡ãƒ¼ã‚¿
 	*/
 	void CreateMesh(FbxMesh* mesh);
 
 
 	/**
-	* @brief ’¸“_ƒCƒ“ƒfƒbƒNƒXƒf[ƒ^‚ğ“Ç‚İ‚Ş
-	* @param[out] mesh_data ƒoƒbƒtƒ@•Û‘¶—p
-	* @param[in] mesh ƒoƒbƒtƒ@æ“¾‚ğ‚·‚éMeshƒf[ƒ^
+	* @brief é ‚ç‚¹ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
+	* @param[out] mesh_data ãƒãƒƒãƒ•ã‚¡ä¿å­˜ç”¨
+	* @param[in] mesh ãƒãƒƒãƒ•ã‚¡å–å¾—ã‚’ã™ã‚‹Meshãƒ‡ãƒ¼ã‚¿
 	*/
 	void LoadIndices(MeshData& mesh_data, FbxMesh* mesh);
 
 	/**
-	* @brief ’¸“_ƒf[ƒ^‚ğ“Ç‚İ‚Ş
-	* @param[out] mesh_data ƒoƒbƒtƒ@•Û‘¶—p
-	* @param[in] mesh ƒoƒbƒtƒ@æ“¾‚ğ‚·‚éMeshƒf[ƒ^
+	* @brief é ‚ç‚¹ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
+	* @param[out] mesh_data ãƒãƒƒãƒ•ã‚¡ä¿å­˜ç”¨
+	* @param[in] mesh ãƒãƒƒãƒ•ã‚¡å–å¾—ã‚’ã™ã‚‹Meshãƒ‡ãƒ¼ã‚¿
 	*/
 	void LoadVertices(MeshData& mesh_data, FbxMesh* mesh);
 
 	/**
-	* @brief –@üƒf[ƒ^‚ğ“Ç‚İ‚Ş
-	* @param[out] mesh_data ƒoƒbƒtƒ@•Û‘¶—p
-	* @param[in] mesh ƒoƒbƒtƒ@æ“¾‚ğ‚·‚éMeshƒf[ƒ^
+	* @brief æ³•ç·šãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
+	* @param[out] mesh_data ãƒãƒƒãƒ•ã‚¡ä¿å­˜ç”¨
+	* @param[in] mesh ãƒãƒƒãƒ•ã‚¡å–å¾—ã‚’ã™ã‚‹Meshãƒ‡ãƒ¼ã‚¿
 	*/
 	void LoadNormals(MeshData& mesh_data, FbxMesh* mesh);
 
 	/**
-	* @brief ’¸“_ƒJƒ‰[ƒf[ƒ^‚ğ“Ç‚İ‚Ş
-	* @param[out] mesh_data ƒoƒbƒtƒ@•Û‘¶—p
-	* @param[in] mesh ƒoƒbƒtƒ@æ“¾‚ğ‚·‚éMeshƒf[ƒ^
+	* @brief é ‚ç‚¹ã‚«ãƒ©ãƒ¼ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
+	* @param[out] mesh_data ãƒãƒƒãƒ•ã‚¡ä¿å­˜ç”¨
+	* @param[in] mesh ãƒãƒƒãƒ•ã‚¡å–å¾—ã‚’ã™ã‚‹Meshãƒ‡ãƒ¼ã‚¿
 	*/
 	void LoadColors(MeshData& mesh_data, FbxMesh* mesh);
 
 	void LoadUV(MeshData& mesh_data, FbxMesh* mesh);
 
 	/**
-	* @brief ƒ}ƒeƒŠƒAƒ‹ƒf[ƒ^‚ğ“Ç‚İ‚Ş
-	* @param[out] mesh_data ƒoƒbƒtƒ@•Û‘¶—p
-	* @param[in] mesh ƒoƒbƒtƒ@æ“¾‚ğ‚·‚éMeshƒf[ƒ^
+	* @brief ãƒãƒ†ãƒªã‚¢ãƒ«ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚€
+	* @param[out] mesh_data ãƒãƒƒãƒ•ã‚¡ä¿å­˜ç”¨
+	* @param[in] mesh ãƒãƒƒãƒ•ã‚¡å–å¾—ã‚’ã™ã‚‹Meshãƒ‡ãƒ¼ã‚¿
 	*/
 	void LoadMaterial(FbxSurfaceMaterial* material);
 

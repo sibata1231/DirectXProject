@@ -20,22 +20,22 @@ HRESULT Terrain::Create(const char* passName, PrimitiveTypes primitiveType, ObjM
     POM_VERTEX* pVtx = pVertexWk;
 
     // 頂点座標の設定
-    pVtx[0].vtx = XMFLOAT3(-m_transform->m_scale.x * 0.5f, 0.0f, -m_transform->m_scale.y * 0.5f);
-    pVtx[1].vtx = XMFLOAT3(-m_transform->m_scale.x * 0.5f, 0.0f,  m_transform->m_scale.y * 0.5f);
-    pVtx[2].vtx = XMFLOAT3( m_transform->m_scale.x * 0.5f, 0.0f, -m_transform->m_scale.y * 0.5f);
-    pVtx[3].vtx = XMFLOAT3( m_transform->m_scale.x * 0.5f, 0.0f,  m_transform->m_scale.y * 0.5f);
+    pVtx[0].vtx = Vector3(-m_transform->m_scale.x * 0.5f, 0.0f, -m_transform->m_scale.y * 0.5f);
+    pVtx[1].vtx = Vector3(-m_transform->m_scale.x * 0.5f, 0.0f,  m_transform->m_scale.y * 0.5f);
+    pVtx[2].vtx = Vector3( m_transform->m_scale.x * 0.5f, 0.0f, -m_transform->m_scale.y * 0.5f);
+    pVtx[3].vtx = Vector3( m_transform->m_scale.x * 0.5f, 0.0f,  m_transform->m_scale.y * 0.5f);
 
     // 法線の設定
-    pVtx[0].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
-    pVtx[1].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
-    pVtx[2].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
-    pVtx[3].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
+    pVtx[0].nor = Vector3(0.0f, 1.0f, 0.0f);
+    pVtx[1].nor = Vector3(0.0f, 1.0f, 0.0f);
+    pVtx[2].nor = Vector3(0.0f, 1.0f, 0.0f);
+    pVtx[3].nor = Vector3(0.0f, 1.0f, 0.0f);
 
     // テクスチャ座標の設定
-    pVtx[0].tex = XMFLOAT2(0.0f, 1.0f);
-    pVtx[1].tex = XMFLOAT2(0.0f, 0.0f);
-    pVtx[2].tex = XMFLOAT2(1.0f, 1.0f);
-    pVtx[3].tex = XMFLOAT2(1.0f, 0.0f);
+    pVtx[0].tex = Vector2(0.0f, 1.0f);
+    pVtx[1].tex = Vector2(0.0f, 0.0f);
+    pVtx[2].tex = Vector2(1.0f, 1.0f);
+    pVtx[3].tex = Vector2(1.0f, 0.0f);
 
     // タンジェントの設定
     pVtx[0].tan = CalcTangent(pVtx[0], pVtx[1], pVtx[2]);
@@ -231,35 +231,34 @@ HRESULT Terrain::MakeMeshVertex(POM_VERTEX vertexWk[], int indexWk[]) {
     return hr;
 }
 
-DirectX::XMFLOAT3 Terrain::CalcTangent(POM_VERTEX p0, POM_VERTEX p1, POM_VERTEX p2) {
+Vector3 Terrain::CalcTangent(POM_VERTEX p0, POM_VERTEX p1, POM_VERTEX p2) {
     // 5次元→3次元頂点に
-    DirectX::XMVECTOR vP0[] = {
-       DirectX::XMVectorSet(p0.vtx.x, p0.tex.x, p0.tex.y,0),
-       DirectX::XMVectorSet(p0.vtx.y, p0.tex.x, p0.tex.y,0),
-       DirectX::XMVectorSet(p0.vtx.z, p0.tex.x, p0.tex.y,0),
+    Vector3 vP0[] = {
+       Vector3(p0.vtx.x, p0.tex.x, p0.tex.y),
+       Vector3(p0.vtx.y, p0.tex.x, p0.tex.y),
+       Vector3(p0.vtx.z, p0.tex.x, p0.tex.y),
     };
-    DirectX::XMVECTOR vP1[] = {
-        DirectX::XMVectorSet(p1.vtx.x, p1.tex.x, p1.tex.y,0),
-        DirectX::XMVectorSet(p1.vtx.y, p1.tex.x, p1.tex.y,0),
-        DirectX::XMVectorSet(p1.vtx.z, p1.tex.x, p1.tex.y,0),
+    Vector3 vP1[] = {
+        Vector3(p1.vtx.x, p1.tex.x, p1.tex.y),
+        Vector3(p1.vtx.y, p1.tex.x, p1.tex.y),
+        Vector3(p1.vtx.z, p1.tex.x, p1.tex.y),
     };
-    DirectX::XMVECTOR vP2[] = {
-        DirectX::XMVectorSet(p2.vtx.x, p2.tex.x, p2.tex.y,0),
-        DirectX::XMVectorSet(p2.vtx.y, p2.tex.x, p2.tex.y,0),
-        DirectX::XMVectorSet(p2.vtx.z, p2.tex.x, p2.tex.y,0),
+    Vector3 vP2[] = {
+        Vector3(p2.vtx.x, p2.tex.x, p2.tex.y),
+        Vector3(p2.vtx.y, p2.tex.x, p2.tex.y),
+        Vector3(p2.vtx.z, p2.tex.x, p2.tex.y),
     };
 
     float u[3];
     for (int i = 0; i < 3; i++) {
-        DirectX::XMVECTOR v1 = DirectX::XMVectorSubtract(vP1[i], vP0[i]);
-        DirectX::XMVECTOR v2 = DirectX::XMVectorSubtract(vP2[i], vP1[i]);
-        DirectX::XMVECTOR cross = DirectX::XMVector3Cross(v1, v2);
-        DirectX::XMFLOAT3 vec;
-        DirectX::XMStoreFloat3(&vec, cross);
+        Vector3 v1 = DirectX::XMVectorSubtract(vP1[i], vP0[i]);
+        Vector3 v2 = DirectX::XMVectorSubtract(vP2[i], vP1[i]);
+        Vector3 cross = DirectX::XMVector3Cross(v1, v2);
+        Vector3 vec = cross;
         u[i] = -vec.y / vec.x;
     }
 
-    DirectX::XMFLOAT3 tangent;
+    Vector3 tangent;
     tangent.x = u[0];
     tangent.y = u[1];
     tangent.z = u[2];

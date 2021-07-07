@@ -1,4 +1,4 @@
-#ifndef ___MESH_H___
+ï»¿#ifndef ___MESH_H___
 #define ___MESH_H___
 
 #include "Transform.h"
@@ -7,34 +7,41 @@
 
 // Terrain , Panel
 typedef struct {
-    XMFLOAT3 vtx;		//!< ’¸“_À•W
-    XMFLOAT3 nor;		//!< –@üƒxƒNƒgƒ‹
-    XMFLOAT2 tex;		//!< ƒeƒNƒXƒ`ƒƒÀ•W
-    XMFLOAT3 tan;		//!< ÚüƒxƒNƒgƒ‹
-    UINT     id;        //!< ƒCƒ“ƒXƒ^ƒ“ƒXID
+    Vector3 vtx;		//!< é ‚ç‚¹åº§æ¨™
+    Vector3 nor;		//!< æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«
+    Vector2 tex;		//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™
+    Vector3 tan;		//!< æŽ¥ç·šãƒ™ã‚¯ãƒˆãƒ«
+    UINT     id;        //!< ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ID
 } POM_VERTEX;
+
+typedef struct {
+    Vector3 Position; //!< é ‚ç‚¹åº§æ¨™
+    Vector3 Normal;	  //!< æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«
+    Vector2 UV;		  //!< ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™
+    Vector3 Tangent;  //!< æŽ¥ç·šãƒ™ã‚¯ãƒˆãƒ«
+} TESSELLATION_VERTEX;
 
 // Shadow
 typedef struct {
-    XMFLOAT3 vtx;	//!< ’¸“_À•W
-    XMFLOAT3 nor;	//!< –@üƒxƒNƒgƒ‹
-    XMFLOAT4 color; //!< ƒJƒ‰[
-    XMFLOAT2 tex;	//!< ƒeƒNƒXƒ`ƒƒÀ•W
+    Vector3 vtx;	//!< é ‚ç‚¹åº§æ¨™
+    Vector3 nor;	//!< æ³•ç·šãƒ™ã‚¯ãƒˆãƒ«
+    Color   color;  //!< ã‚«ãƒ©ãƒ¼
+    Vector2 tex;	//!< ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™
 } SHADOW_VERTEX;
 
 class Mesh : public Component {
 protected:
     HRESULT MakeTexture(const char*szPassName);
 public:
-	ID3D11Buffer*                 m_vertexBuffer;	// ’¸“_ƒoƒbƒtƒ@ƒCƒ“ƒ^[ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	ID3D11Buffer*                 m_indexBuffer;	// ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@ƒCƒ“ƒ^[ƒtƒF[ƒX‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	int                           m_vertexNum;		// ‘’¸“_”	
-	int                           m_indexNum;		// ‘ƒCƒ“ƒfƒbƒNƒX”
-    XMFLOAT4X4                    m_mtxTexture;		// ƒeƒNƒXƒ`ƒƒ ƒ}ƒgƒŠƒbƒNƒX
-    PrimitiveTypes                m_primitiveType;	// ƒvƒŠƒ~ƒeƒBƒuŒ^
-    ObjMaterial*                  m_material;		// ƒ}ƒeƒŠƒAƒ‹
-    ID3D11ShaderResourceView*     m_texture;		// ƒeƒNƒXƒ`ƒƒ
-    MeshRenderer*                 m_renderer;       // ƒŒƒ“ƒ_ƒ‰[
+	ID3D11Buffer*                 m_vertexBuffer;	// é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	ID3D11Buffer*                 m_indexBuffer;	// ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	int                           m_vertexNum;		// ç·é ‚ç‚¹æ•°	
+	int                           m_indexNum;		// ç·ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹æ•°
+    XMFLOAT4X4                    m_mtxTexture;		// ãƒ†ã‚¯ã‚¹ãƒãƒ£ ãƒžãƒˆãƒªãƒƒã‚¯ã‚¹
+    PrimitiveTypes                m_primitiveType;	// ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–åž‹
+    ObjMaterial*                  m_material;		// ãƒžãƒ†ãƒªã‚¢ãƒ«
+    ID3D11ShaderResourceView*     m_texture;		// ãƒ†ã‚¯ã‚¹ãƒãƒ£
+    MeshRenderer*                 m_renderer;       // ãƒ¬ãƒ³ãƒ€ãƒ©ãƒ¼
 public:
     virtual void Release();
 

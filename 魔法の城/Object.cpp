@@ -55,13 +55,13 @@ void Object::Draw() {
 
 #include "Shadow.h"
 void ObjectManager::Init() {
-    m_shadow = new Object(nullptr);
-    m_shadow->AddComponent<Shadow>();
+    //m_shadow = new Object(nullptr);
+    //m_shadow->AddComponent<Shadow>();
 }
 
 void ObjectManager::Release() {
     ObjectManager::AllDelete();
-    SAFE_DELETE(m_shadow);
+    //SAFE_DELETE(m_shadow);
 }
 
 void ObjectManager::Add(Object* object) {
@@ -113,7 +113,7 @@ void ObjectManager::AllDelete() {
 
 void ObjectManager::Update() {
     // 影情報更新
-    m_shadow->Update();
+    //m_shadow->Update();
 
     // オブジェクト情報更新
     m_objectList = m_objectbufferList;
@@ -131,9 +131,9 @@ void ObjectManager::Update() {
 void ObjectManager::Debug() {
 
     // 影情報更新
-    if (ImGui::CollapsingHeader(m_shadow->m_transform->m_name.c_str())) {
-        m_shadow->Debug();
-    }
+    //if (ImGui::CollapsingHeader(m_shadow->m_transform->m_name.c_str())) {
+    //    m_shadow->Debug();
+    //}
 
     // オブジェクト情報更新
     std::map<std::string, std::list<Object*>> debugObject;
@@ -236,6 +236,8 @@ void ObjectManager::ShadowRenderer() {
 // 通常描画
 void ObjectManager::ObjectRenderer() {
     DirectGraphics *graphics = &DirectGraphics::GetInstance();
+    graphics->SetRenderTargets("Default", "Default");
+
     for (auto itr = m_rendererList.begin(); itr != m_rendererList.end(); itr++) {
         RendererTags tag    = itr->first;
         Object*      object = itr->second;
@@ -244,8 +246,10 @@ void ObjectManager::ObjectRenderer() {
         }
         if (tag == RendererTags::MODEL || tag == RendererTags::BACKGROUND || tag == RendererTags::MESH) {
             std::string shaderName = object->GetComponent<Renderer>()->m_shaderName;
-            graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_VERTEX,shaderName);
-            graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_PIXEL, shaderName);
+            graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_VERTEX, shaderName);
+            graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_PIXEL,  shaderName);
+            graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_HULL,   shaderName);
+            graphics->UpdateShader(DirectGraphics::ShaderType::TYPE_DOMAIN, shaderName);
             graphics->UpdateLayout(shaderName);
         }
         object->Draw();
@@ -253,7 +257,7 @@ void ObjectManager::ObjectRenderer() {
 }
 
 void ObjectManager::Draw() {
-    ShadowRenderer();
+    //ShadowRenderer();
     ObjectRenderer();
 }
 

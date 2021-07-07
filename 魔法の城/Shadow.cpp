@@ -20,22 +20,22 @@ HRESULT Shadow::Create(const char* passName, PrimitiveTypes primitiveType, ObjMa
     SHADOW_VERTEX* pVtx = pVertexWk;
 
     // 頂点座標の設定
-    pVtx[0].vtx = XMFLOAT3(-m_transform->m_scale.x * 0.5f, 0.0f, -m_transform->m_scale.y * 0.5f);
-    pVtx[1].vtx = XMFLOAT3(-m_transform->m_scale.x * 0.5f, 0.0f,  m_transform->m_scale.y * 0.5f);
-    pVtx[2].vtx = XMFLOAT3( m_transform->m_scale.x * 0.5f, 0.0f, -m_transform->m_scale.y * 0.5f);
-    pVtx[3].vtx = XMFLOAT3( m_transform->m_scale.x * 0.5f, 0.0f,  m_transform->m_scale.y * 0.5f);
+    pVtx[0].vtx = Vector3(-m_transform->m_scale.x * 0.5f, 0.0f, -m_transform->m_scale.y * 0.5f);
+    pVtx[1].vtx = Vector3(-m_transform->m_scale.x * 0.5f, 0.0f,  m_transform->m_scale.y * 0.5f);
+    pVtx[2].vtx = Vector3( m_transform->m_scale.x * 0.5f, 0.0f, -m_transform->m_scale.y * 0.5f);
+    pVtx[3].vtx = Vector3( m_transform->m_scale.x * 0.5f, 0.0f,  m_transform->m_scale.y * 0.5f);
 
     // 法線の設定
-    pVtx[0].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
-    pVtx[1].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
-    pVtx[2].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
-    pVtx[3].nor = XMFLOAT3(0.0f, 1.0f, 0.0f);
+    pVtx[0].nor = Vector3(0.0f, 1.0f, 0.0f);
+    pVtx[1].nor = Vector3(0.0f, 1.0f, 0.0f);
+    pVtx[2].nor = Vector3(0.0f, 1.0f, 0.0f);
+    pVtx[3].nor = Vector3(0.0f, 1.0f, 0.0f);
 
     // テクスチャ座標の設定
-    pVtx[0].tex = XMFLOAT2(0.0f, 1.0f);
-    pVtx[1].tex = XMFLOAT2(0.0f, 0.0f);
-    pVtx[2].tex = XMFLOAT2(1.0f, 1.0f);
-    pVtx[3].tex = XMFLOAT2(1.0f, 0.0f);
+    pVtx[0].tex = Vector2(0.0f, 1.0f);
+    pVtx[1].tex = Vector2(0.0f, 0.0f);
+    pVtx[2].tex = Vector2(1.0f, 1.0f);
+    pVtx[3].tex = Vector2(1.0f, 0.0f);
 
     // インデックス配列を生成
     int* pIndexWk = new int[4];

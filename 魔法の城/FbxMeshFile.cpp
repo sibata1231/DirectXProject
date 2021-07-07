@@ -14,7 +14,7 @@
 #include "FbxMeshFile.h"
 #include "Texture.h"
 
-bool FbxMeshFile::Load(const char* file_name, ID3D11Device *device, VertexShader* vertex_shader) {
+bool FbxMeshFile::Load(const char* file_name, ID3D11Device *device) {
 	char file_path[256];
 	std::vector<std::string> out_material_list;
 	int len = (int)strlen(file_name);
@@ -188,8 +188,8 @@ void FbxMeshFile::LoadUV(MeshData& mesh_data, FbxMesh* mesh) {
 		FbxVector2& uv = uv_buffer[i];
 
 		// そのまま使用して問題ない
-		mesh_data.m_Vertices[i].TexturePos.X = (float)uv[0];
-		mesh_data.m_Vertices[i].TexturePos.Y = (float)(1.0 - uv[1]);
+		mesh_data.m_Vertices[i].TexturePos.x = (float)uv[0];
+		mesh_data.m_Vertices[i].TexturePos.y = (float)(1.0 - uv[1]);
 	}
 }
 

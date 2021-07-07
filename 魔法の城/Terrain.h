@@ -1,4 +1,4 @@
-#ifndef ___TERRAIN_H___
+﻿#ifndef ___TERRAIN_H___
 #define ___TERRAIN_H___
 
 #include "Mesh.h"
@@ -12,7 +12,7 @@ private:
     float                     m_animationTime;
 private:
     HRESULT MakeMeshVertex(POM_VERTEX vertexWk[], int indexWk[]);
-    DirectX::XMFLOAT3 CalcTangent(POM_VERTEX p0, POM_VERTEX p1, POM_VERTEX p2);
+    Vector3 CalcTangent(POM_VERTEX p0, POM_VERTEX p1, POM_VERTEX p2);
 public:
     virtual ~Terrain() {
         SAFE_RELEASE(m_pomBuffer);

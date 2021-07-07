@@ -1,8 +1,6 @@
 ﻿#include "Player.h"
 #include "Input.h"
 #include "Camera.h"
-#include "Panel.h"
-#include "GameData.h"
 
 #define PATH_PLAYER ("Resources/model/Dragon.fbx") // モデル
 #define OBJECT_NAME ("Player") // オブジェクト名称

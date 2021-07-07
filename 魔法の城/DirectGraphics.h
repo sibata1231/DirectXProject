@@ -40,8 +40,6 @@ public:
 public:
     // 塗りつぶし背景
     ImVec4                    m_backgroundColor = ImVec4(1.0f, 0.5f, 0.5f, 1.0f);	// RenderTarget塗りつぶしカラー(RGBA)
-    ID3D11ShaderResourceView* m_baseTexture;
-
 public:
 	/** Destructor */
 	~DirectGraphics() {}
@@ -116,6 +114,10 @@ public:
 
     ID3D11ShaderResourceView* GetRenderTargetTexture(std::string name) {
         return m_RenderTargetTexture[name];
+    }
+
+    ID3D11ShaderResourceView* GetSampleTexture(std::string name) {
+        return m_SampleTexture[name];
     }
 
     void SetCullMode(int nCullMode) {
@@ -210,6 +212,12 @@ private:
 	 */
     bool CreateShader(ShaderType ShaderType, std::string shaderName, std::string layoutName, int shaderIndex);
 
+    /**
+     * @brief シェーダ作成関数@n
+     * 今回のプロジェクトで使用するシェーダを作成する@n
+     * @return 作成の成否 成功(true)
+     */
+    bool CreateShader(ShaderType ShaderType, std::string shaderName, int shaderIndex);
 	/**
 	 * @brief ViewPort設定関数@n
 	 * ContextにViewPortの設定を行う関数@n
@@ -251,12 +259,15 @@ private:
 
     // Texture
     std::map<std::string , ID3D11SamplerState*>       m_SamplerState;	     //!< @brief Textureサンプラー
+    std::map<std::string , ID3D11ShaderResourceView*> m_SampleTexture;       //!< @brief SampleTexture
 
     // Shader
     std::map<std::string, VertexShader *>      m_VertexShader;	     //!< @brief VertexShader保持用
     std::map<std::string, PixelShader *>       m_PixelShader;	     //!< @brief PixelShader保持用
     std::map<std::string, HullShader *>        m_HullShader;	     //!< @brief HullShader保持用
     std::map<std::string, DomainShader *>      m_DomainShader;	     //!< @brief DomainShader保持用
+
+    // ShaderBuffer
     std::map<std::string, ConstantBuffer *>    m_ConstantBufferData; //!< @brief ConstcantBuffer保持用
     std::map<std::string, ID3D11Buffer* >      m_ConstantBuffer;     //!< @brief 定数バッファ保持用
     std::map<std::string, ID3D11InputLayout* > m_InputLayout;	     //!< @brief 入力レイアウト保持用

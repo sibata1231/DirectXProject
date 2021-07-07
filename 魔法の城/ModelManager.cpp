@@ -1,8 +1,8 @@
-#include "ModelManager.h"
+ï»¿#include "ModelManager.h"
 #include "Camera.h"
 #include "Light.h"
 
-// ‹¤’Ê
+// å…±é€š
 ModelManager::ModelManager() {}
 
 void ModelManager::Uninit() {
@@ -22,16 +22,13 @@ void ModelManager::Uninit() {
 
 
 
-// ’Êíƒ‚ƒfƒ‹
+// é€šå¸¸ãƒ¢ãƒ‡ãƒ«
 void ModelManager::CreateModel(std::string modelName, const char *passName) {
     if (m_modelList[modelName]) {
         return;
     }
     m_modelList[modelName] = new FbxMeshFile();
-    m_modelList[modelName]->Load(
-        passName,
-        DirectGraphics::GetInstance().GetDevice(),
-        DirectGraphics::GetInstance().GetVertexShader("NormalModel"));
+    m_modelList[modelName]->Load(passName, DirectGraphics::GetInstance().GetDevice());
 }
 
 void ModelManager::Draw(std::string modelName, Transform* transform, ModelRenderer* renderer) {
@@ -44,7 +41,7 @@ void ModelManager::Draw(std::string modelName, Transform* transform, ModelRender
 
 
 
-// ƒAƒjƒ[ƒVƒ‡ƒ“ƒ‚ƒfƒ‹
+// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ¢ãƒ‡ãƒ«
 void ModelManager::CreateAnimationModel(std::string modelName, const char *passName) {
     if (m_animationModelList[modelName]) {
         return;
@@ -58,7 +55,7 @@ void ModelManager::CreateAnimationModel(std::string modelName, const char *passN
         passName);
 }
 
-// ƒAƒjƒ[ƒVƒ‡ƒ“ƒ‚ƒfƒ‹
+// ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ãƒ¢ãƒ‡ãƒ«
 void ModelManager::DrawAnimation(std::string modelName,Transform* transform,ModelRenderer* renderer) {
     XMMATRIX world      = XMLoadFloat4x4(&transform->m_world);
     XMMATRIX view       = XMLoadFloat4x4(&MainCamera::GetInstance().GetView());

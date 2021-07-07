@@ -1,3 +1,4 @@
+#include "Noise.hlsli"
 // CameraBuffer
 cbuffer CameraBuffer : register(b0) {
     float4x4 View;
@@ -48,6 +49,25 @@ cbuffer POMBuffer : register(b6) {
     float  VFrame;        //!< UVフレーム
 }
 
+struct Wave {
+	float2 dir;
+	float amplitude;
+	float waveLength;
+};
+
+// Tessellation
+cbuffer TessellationBuffer : register(b7) {
+    float tessellationAmount; //!< Tessellation係数
+	float Hscale;             //!< サイズ
+	float Hbias;              //!< バイアス
+    float time;               //!< 予備
+    Wave  waves[100];
+}
+
+//============================================================================================
+// Struct_Input
+//============================================================================================
+
 struct VS_INPUT_PNCT {
     float3	Position : POSITION;
     float3	Normal   : NORMAL;
@@ -81,44 +101,58 @@ struct VS_INPUT_PNTTI {
     uint   ID       : SV_InstanceID;
 };
 
-// 乱数
-float rand(float3 value) {
-    return frac(sin(dot(value, float3(12.9898, 78.233,56787))) * 43758.5453);
-}
+// Struct representing a single vertex worth of data
+struct VS_INPUT_PNTT {
+	float3 position		: POSITION;
+    float3 normal		: NORMAL;
+	float2 uv			: TEXCOORD;
+	float3 tangent		: TANGENT;
+};
 
-// ノイズ
-float noise(float3 value) {
-    float3 ip = floor(value);
-    float3 fp = smoothstep(0, 1, frac(value));
-    float4 a = float4(
-        rand(ip + float3(0, 0, 0)),
-        rand(ip + float3(1, 0, 0)),
-        rand(ip + float3(0, 1, 0)),
-        rand(ip + float3(1, 1, 0)));
-    float4 b = float4(
-        rand(ip + float3(0, 0, 1)),
-        rand(ip + float3(1, 0, 1)),
-        rand(ip + float3(0, 1, 1)),
-        rand(ip + float3(1, 1, 1)));
-    a = lerp(a, b, fp.z);
-    a.xy = lerp(a.xy, a.zw, fp.y);
-    return lerp(a.x, a.y, fp.x);
-}
+struct  VS_INPUT_P3T {
+	float4 position		: SV_POSITION;
+	float3 uvw			: TEXCOORD;
+};
 
-float perlin(float3 value) {
-    return (noise(value) +
-        noise(value * 2) +
-        noise(value * 4) +
-        noise(value * 8) +
-        noise(value * 16) +
-        noise(value * 32)) / 6;
-}
+struct VertexToHull {
+	float3 normal		: NORMAL;
+	float3 tangent		: TANGENT;
+	float3 worldPos		: POSITION;
+	float2 uv			: TEXCOORD;
+};
 
-float _perlin(float3 value) {
-    return (noise(value)      * 32 +
-            noise(value * 2)  * 16 +
-            noise(value * 4)  *  8 +
-            noise(value * 8)  *  4 +
-            noise(value * 16) *  2 +
-            noise(value * 32)) / 63;
+struct HullToDomain {
+	float3 normal		: NORMAL;
+	float3 tangent		: TANGENT;
+	float3 worldPos		: POSITION;
+	float2 uv			: TEXCOORD;
+};
+
+struct DomainToPixel {
+	float4 vPosition	: SV_POSITION;
+	float3 normal		: NORMAL;
+	float3 tangent		: TANGENT;
+	float3 worldPos		: POSITION;
+	float2 uv			: TEXCOORD;
+};
+#define NUM_CONTROL_POINTS 3
+
+// Output patch constant data.
+struct HS_CONSTANT_DATA_OUTPUT {
+	float EdgeTessFactor[NUM_CONTROL_POINTS] : SV_TessFactor;       // e.g. would be [4] for a quad domain
+	float InsideTessFactor                   : SV_InsideTessFactor; // e.g. would be Inside[2] for a quad domain
+};
+
+// Patch Constant Function
+HS_CONSTANT_DATA_OUTPUT CalcHSPatchConstants(InputPatch<VertexToHull, NUM_CONTROL_POINTS> ip,uint PatchID : SV_PrimitiveID) {
+	HS_CONSTANT_DATA_OUTPUT Output;
+
+	// Insert code to compute Output here
+	Output.EdgeTessFactor[0] = tessellationAmount;
+	Output.EdgeTessFactor[1] = tessellationAmount;
+	Output.EdgeTessFactor[2] = tessellationAmount;
+	//Output.EdgeTessFactor[3] = tessellationAmount;
+	Output.InsideTessFactor = tessellationAmount; // e.g. could calculate dynamic tessellation factors instead
+	//Output.InsideTessFactor[1]  = tessellationAmount;
+	return Output;
 }
